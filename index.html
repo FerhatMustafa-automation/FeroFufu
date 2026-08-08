@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FeroFUFU - Karakter Turnuvasi</title>
+  <meta name="description" content="FeroFUFU - Litvus'un Soytarilari DnD karakterleri arasinda eglenceli bir UwUFUFU turnuva oyunu. Favorin hangisi?" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <nav class="navbar" id="navbar">
+    <div class="navbar-inner">
+      <a href="#" class="navbar-logo" id="navbar-logo">
+        <span class="logo-icon">🎲</span>
+        <span class="logo-text">Fero<span class="logo-accent">FUFU</span></span>
+      </a>
+      <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="navbar-menu" id="navbar-menu">
+        <span class="menu-label">Kategoriler</span>
+        <a href="#" class="nav-item active" id="nav-dnd" data-category="dnd">
+          <span class="nav-icon">🎭</span>Litvus'un Soytarilari
+        </a>
+        <a href="#" class="nav-item coming-soon" id="nav-lol" data-category="lol">
+          <span class="nav-icon">⚔️</span>LoL Karakterleri
+          <span class="badge-soon">Yakinda</span>
+        </a>
+        <a href="#" class="nav-item coming-soon" id="nav-funny" data-category="funny_moments">
+          <span class="nav-icon">😂</span>Komik Anlar
+          <span class="badge-soon">Yakinda</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content" id="main-content">
+    <section class="hero-section" id="hero-section">
+      <div class="hero-bg-particles" id="particles-container"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="hero-title-line">Favori Karakterini</span>
+          <span class="hero-title-accent">Sec &amp; Oyla!</span>
+        </h1>
+        <p class="hero-subtitle">UwUFUFU turnuva sistemiyle en sevdigin karakteri belirle</p>
+        <div class="category-grid" id="category-grid">
+          <div class="category-card active" id="cat-dnd" data-category="dnd" tabindex="0">
+            <div class="cat-glow"></div>
+            <div class="cat-icon">🎭</div>
+            <h2 class="cat-title">Litvus'un Soytarilari</h2>
+            <p class="cat-desc">DnD Seruveni</p>
+            <div class="cat-badge active-badge">✨ Aktif</div>
+            <button class="cat-btn" id="start-dnd-btn" data-category="dnd">Turnuvayi Baslat</button>
+          </div>
+          <div class="category-card locked" id="cat-lol" data-category="lol" tabindex="0">
+            <div class="cat-glow lol-glow"></div>
+            <div class="cat-icon">⚔️</div>
+            <h2 class="cat-title">LoL Karakterleri</h2>
+            <p class="cat-desc">League of Legends</p>
+            <div class="cat-badge soon-badge">🔒 Yakinda</div>
+            <button class="cat-btn disabled" disabled>Yakinda...</button>
+          </div>
+          <div class="category-card locked" id="cat-funny" data-category="funny_moments" tabindex="0">
+            <div class="cat-glow funny-glow"></div>
+            <div class="cat-icon">😂</div>
+            <h2 class="cat-title">Komik Anlar</h2>
+            <p class="cat-desc">En Iyi Anlar</p>
+            <div class="cat-badge soon-badge">🔒 Yakinda</div>
+            <button class="cat-btn disabled" disabled>Yakinda...</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="arena-section hidden" id="arena-section">
+      <div class="tournament-header">
+        <div class="tournament-info">
+          <span class="tournament-category-label" id="tournament-cat-label">🎭 Litvus'un Soytarilari</span>
+          <h2 class="tournament-round-title" id="round-title">Tur 1</h2>
+          <p class="tournament-subtitle" id="round-subtitle">Kim daha sevimli?</p>
+        </div>
+        <div class="tournament-bracket-info" id="bracket-info">
+          <div class="bracket-step" id="bracket-r1">1. Tur</div>
+          <div class="bracket-arrow">→</div>
+          <div class="bracket-step" id="bracket-semi">Yari Final</div>
+          <div class="bracket-arrow">→</div>
+          <div class="bracket-step" id="bracket-final">Final</div>
+          <div class="bracket-arrow">→</div>
+          <div class="bracket-step champion-step" id="bracket-champ">🏆 Sampiyon</div>
+        </div>
+        <button class="back-btn" id="back-to-home-btn">← Geri</button>
+      </div>
+      <div class="match-counter" id="match-counter">
+        <span id="match-count-text">Mac 1 / 4</span>
+        <div class="match-progress-bar">
+          <div class="match-progress-fill" id="match-progress-fill"></div>
+        </div>
+      </div>
+      <div class="vs-arena" id="vs-arena">
+        <div class="character-slot" id="char-slot-left">
+          <div class="character-card" id="char-card-left" tabindex="0" role="button">
+            <div class="card-glow-effect"></div>
+            <div class="card-shine"></div>
+            <div class="character-image-wrapper">
+              <img class="character-image" id="char-img-left" src="" alt="" />
+              <div class="image-overlay"></div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name" id="char-name-left">Karakter 1</h3>
+              <p class="character-desc" id="char-desc-left"></p>
+              <div class="character-class" id="char-class-left"></div>
+            </div>
+            <div class="vote-overlay">
+              <span class="vote-text">OY VER! 👑</span>
+            </div>
+          </div>
+        </div>
+        <div class="vs-separator">
+          <div class="vs-ring"></div>
+          <div class="vs-ring vs-ring-2"></div>
+          <div class="vs-ring vs-ring-3"></div>
+          <span class="vs-text">VS</span>
+          <div class="vs-sparks" id="vs-sparks"></div>
+        </div>
+        <div class="character-slot" id="char-slot-right">
+          <div class="character-card" id="char-card-right" tabindex="0" role="button">
+            <div class="card-glow-effect"></div>
+            <div class="card-shine"></div>
+            <div class="character-image-wrapper">
+              <img class="character-image" id="char-img-right" src="" alt="" />
+              <div class="image-overlay"></div>
+            </div>
+            <div class="character-info">
+              <h3 class="character-name" id="char-name-right">Karakter 2</h3>
+              <p class="character-desc" id="char-desc-right"></p>
+              <div class="character-class" id="char-class-right"></div>
+            </div>
+            <div class="vote-overlay">
+              <span class="vote-text">OY VER! 👑</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class="next-match-hint" id="next-match-hint">Favori karakterine tikla ve ust tura gecir! ✨</p>
+    </section>
+
+    <section class="champion-section hidden" id="champion-section">
+      <div class="confetti-container" id="confetti-container"></div>
+      <div class="champion-content">
+        <div class="champion-crown">👑</div>
+        <h2 class="champion-announcement" id="champion-announcement">Litvus'un Soytarilari'nin</h2>
+        <h1 class="champion-title">En Sevilen Karakteri!</h1>
+        <div class="champion-card-wrapper">
+          <div class="champion-card" id="champion-card">
+            <div class="champion-glow-aura"></div>
+            <div class="champion-sparkles">
+              <span>✨</span><span>⭐</span><span>✨</span>
+              <span>🌟</span><span>✨</span><span>⭐</span>
+            </div>
+            <div class="champion-image-wrapper">
+              <img class="champion-image" id="champion-img" src="" alt="" />
+            </div>
+            <div class="champion-info">
+              <h3 class="champion-name" id="champion-name"></h3>
+              <p class="champion-desc" id="champion-desc"></p>
+              <div class="champion-class" id="champion-class"></div>
+            </div>
+          </div>
+        </div>
+        <div class="champion-actions">
+          <button class="replay-btn" id="replay-btn">🔄 Yeniden Oyna</button>
+          <button class="home-btn" id="champion-home-btn">🏠 Ana Sayfa</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Made with 💜 by <strong>FeroFUFU</strong> · Litvus'un Soytarilari &copy; 2025</p>
+  </footer>
+  <script src="script.js"></script>
+</body>
+</html>
