@@ -1,32 +1,32 @@
-﻿/* =====================================================
+/* =====================================================
    FeroFUFU - style.css
    UwUFUFU Game Culture Dark Theme
    ===================================================== */
 
 /* ---------- CSS Variables / Design Tokens ---------- */
 :root {
-  --bg-primary:     #0b0c10;
-  --bg-secondary:   #0f1117;
-  --bg-card:        #13161e;
-  --bg-card-hover:  #181c27;
+  --bg-primary:     #0b0502;
+  --bg-secondary:   #120904;
+  --bg-card:        rgba(20, 14, 12, 0.78);
+  --bg-card-hover:  rgba(40, 24, 18, 0.85);
 
-  --accent-purple:  #8b5cf6;
-  --accent-violet:  #7c3aed;
-  --accent-pink:    #ec4899;
-  --accent-cyan:    #06b6d4;
-  --accent-gold:    #f59e0b;
+  --accent-purple:  #FF9F1C;
+  --accent-violet:  #FF9F1C;
+  --accent-pink:    #FF9F1C;
+  --accent-cyan:    #D4AF37;
+  --accent-gold:    #D4AF37;
   --accent-green:   #10b981;
   --accent-red:     #ef4444;
 
-  --text-primary:   #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted:     #475569;
+  --text-primary:   #FDF0D5;
+  --text-secondary: #C0B297;
+  --text-muted:     #C0B297;
 
-  --border-subtle:  rgba(139, 92, 246, 0.2);
-  --border-active:  rgba(139, 92, 246, 0.6);
+  --border-subtle:  rgba(255, 159, 28, 0.3);
+  --border-active:  rgba(255, 159, 28, 0.6);
 
   --shadow-card:    0 8px 32px rgba(0,0,0,0.5);
-  --shadow-glow:    0 0 40px rgba(139, 92, 246, 0.35);
+  --shadow-glow:    0 0 15px rgba(255, 159, 28, 0.2);
 
   --radius-sm:      8px;
   --radius-md:      16px;
@@ -39,20 +39,56 @@
 
   --navbar-h: 70px;
   --font-display: 'Cinzel', serif;
-  --font-body:    'Outfit', sans-serif;
+  --font-body:    'Inter', sans-serif;
 }
 
 /* ---------- Reset ---------- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
+main {
+  padding-top: 20px;
+}
+
 body {
-  background: var(--bg-primary);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
   font-family: var(--font-body);
-  min-height: 100vh;
-  overflow-x: hidden;
-  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =====================================================
+   BACKGROUND VIDEO & OVERLAY
+   ===================================================== */
+#bg-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -2;
+  pointer-events: none;
+  filter: brightness(1.05) contrast(1.1) saturate(1.2);
+}
+
+.bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2); /* Sadece %20 siyah karartma */
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* =====================================================
+   TYPOGRAPHY
+   ===================================================== */
+h1, h2, h3, .title, .logo, .navbar-logo, .sidebar-logo-text, .champion-announcement {
+  font-family: var(--font-display);
+  text-shadow: 0 0 10px rgba(255, 159, 28, 0.4);
 }
 
 a { text-decoration: none; color: inherit; }
@@ -71,16 +107,17 @@ img { display: block; max-width: 100%; }
   position: fixed;
   top: 0; left: 0; right: 0;
   height: var(--navbar-h);
-  background: rgba(11,12,16,0.85);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--border-subtle);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4), transparent);
+  border-bottom: none;
   z-index: 1000;
   transition: background var(--transition-med);
 }
 
 .navbar.scrolled {
   background: rgba(11,12,16,0.97);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--border-subtle);
   box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 

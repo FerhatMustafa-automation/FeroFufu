@@ -1,42 +1,149 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FeroFUFU - Karakter Turnuvasi</title>
-  <meta name="description" content="FeroFUFU - Litvus'un Soytarilari DnD karakterleri arasinda eglenceli bir UwUFUFU turnuva oyunu. Favorin hangisi?" />
+  <title>FeroFUFU - Çok Amaçlı Platform</title>
+  <meta name="description" content="FeroFUFU – Litvus'un Soytarıları DnD turnuvası, podcastler, ses kayıtları ve daha fazlası. UwUFUFU platformu." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/modals.css" />
+  <link rel="stylesheet" href="css/audio-player.css" />
+  <link rel="stylesheet" href="css/video-gallery.css" />
+  <link rel="stylesheet" href="css/admin.css" />
 </head>
 <body>
+  <!-- ================================================
+       BACKGROUND VIDEO & OVERLAY
+       ================================================ -->
+  <video id="bg-video" autoplay loop muted playsinline src="images/bg-animation.webm"></video>
+  <div class="bg-overlay"></div>
+
+  <!-- ================================================
+       SIDEBAR OVERLAY
+       ================================================ -->
+  <div class="sidebar-overlay" id="sidebar-overlay" aria-hidden="true"></div>
+
+  <!-- ================================================
+       SIDEBAR
+       ================================================ -->
+  <aside class="sidebar" id="sidebar" aria-label="Yan Menü">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <span class="sidebar-logo-icon">🎲</span>
+        <span class="sidebar-logo-text">Fero<span class="accent">FUFU</span></span>
+      </div>
+      <button class="sidebar-close-btn" id="sidebar-close" aria-label="Menüyü Kapat">✕</button>
+    </div>
+
+    <p class="sidebar-section-label">İçerikler</p>
+
+    <nav class="sidebar-nav" aria-label="Kategoriler">
+
+      <div class="sidebar-item sidebar-active" data-category="dnd" tabindex="0" role="button" id="sidebar-dnd">
+        <span class="sidebar-item-icon">🎲</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">DnD Karakter Oylaması</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Aktif</span>
+      </div>
+
+      <div class="sidebar-item" data-category="podcast" tabindex="0" role="button" id="sidebar-podcasts">
+        <span class="sidebar-item-icon">🎄</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">Yılbaşı Podcastleri</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Yeni</span>
+      </div>
+
+      <div class="sidebar-item" data-category="audio" tabindex="0" role="button" id="sidebar-audio">
+        <span class="sidebar-item-icon">🎙️</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">Epik Ses Kayıtları</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Yeni</span>
+      </div>
+
+      <div class="sidebar-item" data-category="season1" tabindex="0" role="button" id="sidebar-s1">
+        <span class="sidebar-item-icon">🎥</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">Litvus'un Soytarıları S1</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Yeni</span>
+      </div>
+
+      <div class="sidebar-item" data-category="season2" tabindex="0" role="button" id="sidebar-s2">
+        <span class="sidebar-item-icon">🎥</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">Litvus'un Soytarıları S2</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Yeni</span>
+      </div>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <p class="sidebar-footer-text">Made with 💜 by <span>FeroFUFU</span><br/>© 2025</p>
+    </div>
+  </aside>
+
+  <!-- ================================================
+       NAVBAR
+       ================================================ -->
   <nav class="navbar" id="navbar">
     <div class="navbar-inner">
-      <a href="#" class="navbar-logo" id="navbar-logo">
-        <span class="logo-icon">🎲</span>
-        <span class="logo-text">Fero<span class="logo-accent">FUFU</span></span>
-      </a>
-      <button class="hamburger" id="hamburger-btn" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="navbar-menu" id="navbar-menu">
-        <span class="menu-label">Kategoriler</span>
-        <a href="#" class="nav-item active" id="nav-dnd" data-category="dnd">
-          <span class="nav-icon">🎭</span>Litvus'un Soytarilari
-        </a>
-        <a href="#" class="nav-item coming-soon" id="nav-lol" data-category="lol">
-          <span class="nav-icon">⚔️</span>LoL Karakterleri
-          <span class="badge-soon">Yakinda</span>
-        </a>
-        <a href="#" class="nav-item coming-soon" id="nav-funny" data-category="funny_moments">
-          <span class="nav-icon">😂</span>Komik Anlar
-          <span class="badge-soon">Yakinda</span>
+
+      <!-- Sol grup: Sidebar toggle + Logo -->
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button class="sidebar-toggle-btn" id="sidebar-toggle" aria-label="Yan Menüyü Aç" aria-expanded="false" aria-controls="sidebar">
+          <span class="toggle-icon">
+            <span></span><span></span><span></span>
+          </span>
+        </button>
+        <a href="#" class="navbar-logo" id="navbar-logo">
+          <span class="logo-icon">🎲</span>
+          <span class="logo-text">Fero<span class="logo-accent">FUFU</span></span>
         </a>
       </div>
+
+      <!-- Sağ grup: Nav items + Upload butonu + Hamburger -->
+      <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
+        <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="navbar-menu" id="navbar-menu">
+          <span class="menu-label">Kategoriler</span>
+          <a href="#" class="nav-item active" id="nav-dnd" data-category="dnd">
+            <span class="nav-icon">🎭</span>Litvus'un Soytarilari
+          </a>
+          <a href="#" class="nav-item coming-soon" id="nav-lol" data-category="lol">
+            <span class="nav-icon">⚔️</span>LoL Karakterleri
+            <span class="badge-soon">Yakinda</span>
+          </a>
+          <a href="#" class="nav-item coming-soon" id="nav-funny" data-category="funny_moments">
+            <span class="nav-icon">😂</span>Komik Anlar
+            <span class="badge-soon">Yakinda</span>
+          </a>
+        </div>
+        <button class="nav-admin-btn" id="admin-login-btn" aria-label="Yönetici Paneli">
+          <span class="admin-btn-icon">⚙️</span>
+          <span class="admin-btn-text">Yönetici</span>
+        </button>
+        <button class="nav-upload-btn" id="upload-btn" aria-label="İçerik Yükle">
+          <span class="upload-btn-icon">⬆️</span>
+          <span class="upload-btn-text">Yükle / İçerik Ekle</span>
+        </button>
+      </div>
+
     </div>
   </nav>
 
+  <!-- ================================================
+       MAIN CONTENT
+       ================================================ -->
   <main class="main-content" id="main-content">
     <section class="hero-section" id="hero-section">
       <div class="hero-bg-particles" id="particles-container"></div>
@@ -176,11 +283,257 @@
         </div>
       </div>
     </section>
+
+    <!-- ================================================
+         YILBAŞI PODCASTLERİ SECTION
+         ================================================ -->
+    <section class="audio-section hidden" id="podcasts-section" aria-label="Yılbaşı Podcastleri">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
+    <!-- ================================================
+         EPİK SES KAYITLARI SECTION
+         ================================================ -->
+    <section class="audio-section hidden" id="audio-vault-section" aria-label="Epik Ses Kayıtları">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
+    <!-- ================================================
+         LİTVUS'UN SOYTARILARI SEZON 1
+         ================================================ -->
+    <section class="video-section hidden" id="season1-section" aria-label="Litvus'un Soytarıları Sezon 1">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
+    <!-- ================================================
+         LİTVUS'UN SOYTARILARI SEZON 2
+         ================================================ -->
+    <section class="video-section hidden" id="season2-section" aria-label="Litvus'un Soytarıları Sezon 2">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
   </main>
 
   <footer class="site-footer">
     <p>Made with 💜 by <strong>FeroFUFU</strong> · Litvus'un Soytarilari &copy; 2025</p>
   </footer>
+
+  <!-- ================================================
+       ŞİFRE MODALI
+       ================================================ -->
+  <div class="modal-backdrop" id="password-modal" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="password-modal-close" aria-label="Kapat">✕</button>
+      <span class="pw-modal-icon" role="img" aria-label="Kilit">🔐</span>
+      <h2 class="pw-modal-title" id="pw-modal-title">Yönetici Girişi</h2>
+      <p class="pw-modal-subtitle">İçerik eklemek için şifreyi girin</p>
+      <div class="pw-input-wrapper">
+        <input
+          type="password"
+          id="password-input"
+          placeholder="Şifre..."
+          autocomplete="current-password"
+          aria-label="Şifre"
+        />
+        <button class="pw-toggle-visibility" id="pw-toggle" aria-label="Şifreyi göster/gizle" type="button">👁</button>
+      </div>
+      <p class="pw-error" id="password-error" aria-live="polite"></p>
+      <button class="pw-submit-btn" id="password-submit" type="button">Giriş Yap →</button>
+    </div>
+  </div>
+
+  <!-- ================================================
+       İÇERİK YÜKLEME FORMU MODALI
+       ================================================ -->
+  <div class="modal-backdrop" id="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="upload-modal-close" aria-label="Kapat">✕</button>
+      <div class="upload-modal-header">
+        <span class="upload-modal-icon" role="img" aria-label="Yükle">📦</span>
+        <div>
+          <h2 class="upload-modal-title" id="upload-modal-title">İçerik Ekle</h2>
+          <p class="upload-modal-subtitle">Yeni bir içerik veya bölüm ekleyin</p>
+        </div>
+      </div>
+
+      <form id="upload-form" novalidate>
+        <input type="hidden" id="upload-edit-id" value="" />
+
+        <div class="form-group">
+          <label class="form-label" for="upload-title">
+            Başlık <span class="required">*</span>
+          </label>
+          <input
+            type="text"
+            class="form-input"
+            id="upload-title"
+            placeholder="Örn: Sezon 3 Bölüm 1"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="upload-category">
+            Kategori <span class="required">*</span>
+          </label>
+          <select class="form-select" id="upload-category" required>
+            <option value="" disabled selected>Kategori seçin...</option>
+            <option value="dnd">🎲 DnD Karakter Oylaması</option>
+            <option value="podcast">🎄 Yılbaşı Podcastleri</option>
+            <option value="audio">🎙️ Epik Ses Kayıtları</option>
+            <option value="season1">🎭 Litvus'un Soytarıları Sezon 1</option>
+            <option value="season2">🎭 Litvus'un Soytarıları Sezon 2</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="upload-desc">Açıklama</label>
+          <textarea
+            class="form-textarea"
+            id="upload-desc"
+            placeholder="İçerik hakkında kısa bir açıklama..."
+            rows="3"
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="upload-file">Görsel</label>
+          <div class="file-input-wrapper">
+            <label class="file-input-label" for="upload-file">
+              <span>🖼️</span>
+              <span>Görsel seç veya sürükle bırak...</span>
+            </label>
+            <input
+              type="file"
+              class="form-file-input"
+              id="upload-file"
+              accept="image/*"
+              aria-label="Görsel yükle"
+            />
+          </div>
+          <div class="upload-preview" id="upload-preview">
+            <img id="upload-preview-img" src="" alt="Önizleme" />
+          </div>
+        </div>
+
+        <!-- Ses alanları: yalnızca podcast/audio kategorisi seçilince görünür -->
+        <div class="form-group audio-fields" id="audio-fields" style="display:none;">
+          <label class="form-label" for="upload-audio-url">
+            🎵 Ses Dosyası URL'si
+          </label>
+          <input
+            type="url"
+            class="form-input"
+            id="upload-audio-url"
+            placeholder="https://... .mp3 uzantılı doğrudan link"
+            aria-label="Ses URL'si"
+          />
+          <p style="font-family:'Outfit',sans-serif;font-size:0.72rem;color:#475569;margin-top:6px;">
+            💡 Bir MP3 URL'si girin — veya aşağıdan dosya yükleyin (base64 olarak saklanır)
+          </p>
+        </div>
+
+        <div class="form-group audio-fields" id="audio-file-group" style="display:none;">
+          <label class="form-label" for="upload-audio-file">🎙️ MP3 Dosya Yükle</label>
+          <div class="file-input-wrapper">
+            <label class="file-input-label" for="upload-audio-file">
+              <span>🎵</span>
+              <span>MP3 dosyası seç...</span>
+            </label>
+            <input
+              type="file"
+              class="form-file-input"
+              id="upload-audio-file"
+              accept="audio/mp3,audio/mpeg,audio/*"
+              aria-label="Ses dosyası yükle"
+            />
+          </div>
+          <p class="audio-file-name" id="audio-file-name" style="font-family:'Outfit',sans-serif;font-size:0.72rem;color:#475569;margin-top:6px;"></p>
+        </div>
+
+        <!-- Video alanları: yalnızca season1/season2 kategorisi seçilince görünür -->
+        <div class="form-group video-fields" id="video-fields" style="display:none;">
+          <label class="form-label" for="upload-video-url">
+            🎥 YouTube / Drive Video Linki <span class="required">*</span>
+          </label>
+          <input
+            type="url"
+            class="form-input"
+            id="upload-video-url"
+            placeholder="https://www.youtube.com/watch?v=..."
+            aria-label="Video linki"
+          />
+          <div class="video-link-preview" id="video-link-preview">
+            ✅ Dönüştürme: <span id="video-link-converted"></span>
+          </div>
+          <p style="font-family:'Outfit',sans-serif;font-size:0.72rem;color:#475569;margin-top:6px;line-height:1.5;">
+            💡 YouTube, youtu.be veya Google Drive linkleri otomatik embed formatına dönüştürülür.
+          </p>
+        </div>
+
+        <p class="upload-status" id="upload-status"></p>
+
+        <div class="form-actions">
+          <button type="submit" class="upload-submit-btn" id="upload-submit-btn">
+            ✅ Kaydet
+          </button>
+          <button type="button" class="upload-cancel-btn" id="upload-cancel-btn">
+            İptal
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ================================================
+       YÖNETİCİ ŞİFRE MODALI
+       ================================================ -->
+  <div class="modal-backdrop" id="admin-password-modal" role="dialog" aria-modal="true" aria-labelledby="admin-pw-title">
+    <div class="modal-box">
+      <button class="modal-close-btn" id="admin-password-close" aria-label="Kapat">✕</button>
+      <span class="pw-modal-icon" role="img" aria-label="Kilit">🛡️</span>
+      <h2 class="pw-modal-title" id="admin-pw-title">Yetkili Girişi</h2>
+      <p class="pw-modal-subtitle">Yönetici paneline erişmek için şifre girin</p>
+      <div class="pw-input-wrapper">
+        <input
+          type="password"
+          id="admin-password-input"
+          placeholder="Şifre..."
+          autocomplete="current-password"
+          aria-label="Şifre"
+        />
+        <button class="pw-toggle-visibility" id="admin-pw-toggle" aria-label="Şifreyi göster/gizle" type="button">👁</button>
+      </div>
+      <p class="pw-error" id="admin-password-error" aria-live="polite"></p>
+      <button class="pw-submit-btn" id="admin-password-submit" type="button" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); border-color: rgba(239, 68, 68, 0.4);">Giriş Yap →</button>
+    </div>
+  </div>
+
+  <!-- ================================================
+       SCRIPTS
+       ================================================ -->
+  <script src="js/modules/dnd.js"></script>
+  <script src="js/modules/podcasts.js"></script>
+  <script src="js/modules/audioVault.js"></script>
+  <script src="js/modules/season1.js"></script>
+  <script src="js/modules/season2.js"></script>
+  <script src="js/modules/upload.js"></script>
+  <script src="js/modules/admin.js"></script>
   <script src="script.js"></script>
+
+  <!-- Şifre görünürlük toggle -->
+  <script>
+    document.getElementById("pw-toggle")?.addEventListener("click", function () {
+      const inp = document.getElementById("password-input");
+      if (!inp) return;
+      inp.type = inp.type === "password" ? "text" : "password";
+      this.textContent = inp.type === "password" ? "👁" : "🙈";
+    });
+    document.getElementById("upload-cancel-btn")?.addEventListener("click", function() {
+      document.getElementById("upload-modal")?.classList.remove("modal-visible");
+      document.body.classList.remove("modal-open");
+    });
+  </script>
 </body>
 </html>

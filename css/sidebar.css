@@ -1,0 +1,324 @@
+/* =====================================================
+   FeroFUFU – css/sidebar.css
+   Açılır-Kapanır Yan Menü (Sol Sidebar)
+   ===================================================== */
+
+/* ---- Sidebar Toggle Button (Navbar'da) ---- */
+.sidebar-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(139, 92, 246, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  flex-shrink: 0;
+  margin-right: 12px;
+  position: relative;
+}
+
+.sidebar-toggle-btn:hover {
+  background: rgba(139, 92, 246, 0.25);
+  border-color: rgba(139, 92, 246, 0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
+}
+
+.sidebar-toggle-btn .toggle-icon {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.3s ease;
+}
+
+.sidebar-toggle-btn .toggle-icon span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: #a78bfa;
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.sidebar-toggle-btn.is-open .toggle-icon span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.sidebar-toggle-btn.is-open .toggle-icon span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.sidebar-toggle-btn.is-open .toggle-icon span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* ---- Sidebar Overlay ---- */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  z-index: 900;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.sidebar-overlay.overlay-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ---- Sidebar Panel ---- */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100dvh;
+  width: 290px;
+  background: linear-gradient(165deg, #0f1117 0%, #13111f 50%, #0d0f1a 100%);
+  border-right: 1px solid rgba(139, 92, 246, 0.18);
+  z-index: 950;
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar.sidebar-open {
+  transform: translateX(0);
+  box-shadow: 8px 0 40px rgba(0, 0, 0, 0.6), 4px 0 12px rgba(139, 92, 246, 0.15);
+}
+
+/* Subtle glow strip on right edge */
+.sidebar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, transparent 0%, #8b5cf6 40%, #06b6d4 70%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.sidebar.sidebar-open::after {
+  opacity: 0.6;
+}
+
+/* ---- Sidebar Header ---- */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid rgba(139, 92, 246, 0.12);
+  margin-top: 0;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-logo-icon {
+  font-size: 1.5rem;
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.6));
+}
+
+.sidebar-logo-text {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e2d9f3;
+  letter-spacing: 0.02em;
+}
+
+.sidebar-logo-text .accent {
+  color: #a78bfa;
+}
+
+.sidebar-close-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  cursor: pointer;
+  color: #94a3b8;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.sidebar-close-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #f87171;
+  transform: scale(1.05);
+}
+
+/* ---- Sidebar Label ---- */
+.sidebar-section-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #475569;
+  padding: 18px 20px 8px;
+}
+
+/* ---- Sidebar Nav ---- */
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 12px 12px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(139, 92, 246, 0.3) transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar { width: 4px; }
+.sidebar-nav::-webkit-scrollbar-track { background: transparent; }
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 2px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: relative;
+  text-decoration: none;
+  margin-bottom: 3px;
+  border: 1px solid transparent;
+}
+
+.sidebar-item:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.sidebar-item.sidebar-active {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(6, 182, 212, 0.08));
+  border-color: rgba(139, 92, 246, 0.35);
+  box-shadow: inset 0 0 12px rgba(139, 92, 246, 0.05), 0 2px 8px rgba(139, 92, 246, 0.15);
+}
+
+/* Active left accent bar */
+.sidebar-item.sidebar-active::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: linear-gradient(180deg, #8b5cf6, #06b6d4);
+  border-radius: 0 2px 2px 0;
+}
+
+.sidebar-item.sidebar-locked {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.sidebar-item.sidebar-locked:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+.sidebar-item-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+  text-align: center;
+  filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.4));
+  transition: filter 0.2s ease;
+}
+
+.sidebar-active .sidebar-item-icon {
+  filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.7));
+}
+
+.sidebar-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-item-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #cbd5e1;
+  line-height: 1.3;
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-active .sidebar-item-title {
+  color: #e2d9f3;
+  font-weight: 600;
+}
+
+.sidebar-item-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 20px;
+  flex-shrink: 0;
+}
+
+.badge-active {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.badge-soon {
+  background: rgba(100, 116, 139, 0.15);
+  color: #64748b;
+  border: 1px solid rgba(100, 116, 139, 0.2);
+}
+
+/* ---- Sidebar Footer ---- */
+.sidebar-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(139, 92, 246, 0.1);
+}
+
+.sidebar-footer-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  color: #334155;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.sidebar-footer-text span {
+  color: #4f46e5;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100vw;
+  }
+}

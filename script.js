@@ -1,13 +1,18 @@
 /* =====================================================
    FeroFUFU - script.js
-   UwUFUFU Tournament System v1.0
+   UwUFUFU Platform v2.0  –  Ana Orkestrasyon Dosyası
+
+   Modüler yapı:
+     js/modules/dnd.js     – DnD turnuva motoru + karakter verileri
+     js/modules/upload.js  – Şifre doğrulama + içerik yükleme formu
+     css/sidebar.css       – Yan menü stilleri
+     css/modals.css        – Modal stilleri
    ===================================================== */
 
 "use strict";
 
 /* =====================================================
    SECTION 1: MODULAR CATEGORIES CONFIGURATION
-   Komut 4 - Modüler yapı
    ===================================================== */
 const categories = {
   dnd: {
@@ -18,6 +23,42 @@ const categories = {
     announcement: "Litvus'un Soytarilari'nin",
     color: "#8b5cf6",
     characters: null  // loaded from dndCharacters
+  },
+  podcast: {
+    id: "podcast",
+    label: "Yılbaşı Podcastleri",
+    icon: "🎄",
+    active: true,
+    announcement: "Yılbaşı Podcastleri",
+    color: "#22c55e",
+    characters: null
+  },
+  audio: {
+    id: "audio",
+    label: "Epik Ses Kayıtları",
+    icon: "🎙️",
+    active: true,
+    announcement: "Epik Ses Kayıtları",
+    color: "#f97316",
+    characters: null
+  },
+  season1: {
+    id: "season1",
+    label: "Litvus'un Soytarıları Sezon 1",
+    icon: "🎥",
+    active: true,
+    announcement: "Litvus'un Soytarıları Sezon 1",
+    color: "#8b5cf6",
+    characters: null
+  },
+  season2: {
+    id: "season2",
+    label: "Litvus'un Soytarıları Sezon 2",
+    icon: "🎥",
+    active: true,
+    announcement: "Litvus'un Soytarıları Sezon 2",
+    color: "#ef4444",
+    characters: null
   },
   lol: {
     id: "lol",
@@ -40,295 +81,15 @@ const categories = {
 };
 
 /* =====================================================
-   SECTION 2: DnD CHARACTER DATA – Litvus'un Soytarilari
-   Gorseller: images/ klasorunden yuklendi (35 PNG karakter)
+   SECTION 2: DnD CHARACTER DATA
+   → Taşındı: js/modules/dnd.js
    ===================================================== */
-const dndCharacters = [
-  {
-    id: 1,
-    name: "Bob",
-    image: "images/Bob.png",
-    description: "Sade ama etkili. Ne düşündüğünü hiç belli etmez, ama her şeyi görüp işitir.",
-    class: "Bilinmeyen",
-    color: "#64748b"
-  },
-  {
-    id: 2,
-    name: "Valor",
-    image: "images/Valor.png",
-    description: "Yiğitlik onun ikinci adı. Tehlikeden kaçmak diye bir şey yok sözlüğünde.",
-    class: "Savaşçı",
-    color: "#ef4444"
-  },
-  {
-    id: 3,
-    name: "Doktor Tim",
-    image: "images/Doktor Tim.png",
-    description: "İyileştirdiğinden çok daha fazlasını bozar ama hep iyi niyetle yapar.",
-    class: "Healer",
-    color: "#06b6d4"
-  },
-  {
-    id: 4,
-    name: "Paladin Doris",
-    image: "images/Paladin Doris.png",
-    description: "Tanrının gözde kızı. Işığı hem kalkan hem kılıç olarak kullanır.",
-    class: "Paladin",
-    color: "#f59e0b"
-  },
-  {
-    id: 5,
-    name: "Kont Mrakula",
-    image: "images/Kont Mrakula.png",
-    description: "Zarif, gizemli ve biraz tehlikeli. Gece yarısı davetlere bayılır.",
-    class: "Vampire",
-    color: "#6d28d9"
-  },
-  {
-    id: 6,
-    name: "Kral",
-    image: "images/Kral.png",
-    description: "Tahtı kadar ağır bir sorumluluğu var. Kararları krallığın kaderini şekillendirir.",
-    class: "Ruler",
-    color: "#d4af37"
-  },
-  {
-    id: 7,
-    name: "Kaslı Ted",
-    image: "images/Kaslı ted.png",
-    description: "Kolları kaya gibi, kalbi de aynı. Düşünmeden önce yumruk atar.",
-    class: "Barbarian",
-    color: "#f97316"
-  },
-  {
-    id: 8,
-    name: "Kaslı Lim",
-    image: "images/Kaslı lim.png",
-    description: "Ted'in biraz daha akıllı versiyonu. Biraz.",
-    class: "Fighter",
-    color: "#84cc16"
-  },
-  {
-    id: 9,
-    name: "Nazik Prens",
-    image: "images/Nazik Prens.png",
-    description: "Kibarlığı bazen zayıflık sanılır ama yanılırlar. Çok yanılırlar.",
-    class: "Bard",
-    color: "#ec4899"
-  },
-  {
-    id: 10,
-    name: "Prens Arthur",
-    image: "images/7.Prens Arthur.png",
-    description: "Krallığın yedinci prensi. Sıraya girmekten bıkmış, macera arıyor.",
-    class: "Knight",
-    color: "#3b82f6"
-  },
-  {
-    id: 11,
-    name: "Sir David",
-    image: "images/Sir David(Ejder Dogan).png",
-    description: "Ejderden doğdu, ejder gibi savaşır. Alev nefesi sadece mecazi değil.",
-    class: "Dragon Knight",
-    color: "#dc2626"
-  },
-  {
-    id: 12,
-    name: "Yüce Boris",
-    image: "images/Yüce Efsanevi Paladin Boris.png",
-    description: "Efsanevi paladin. Adı bile söylenince düşmanlar titrer.",
-    class: "Legendary Paladin",
-    color: "#f59e0b"
-  },
-  {
-    id: 13,
-    name: "Elf Anna",
-    image: "images/Elf anna.png",
-    description: "Ormanların sesi, rüzgarın kızı. Oku asla ıskalamaz.",
-    class: "Ranger",
-    color: "#10b981"
-  },
-  {
-    id: 14,
-    name: "Küçük Elf Citrus",
-    image: "images/Kucuk elf Citrus.png",
-    description: "Küçük ama marifeti büyük. Elfçe büyüler konusunda kimseyle yarışamaz.",
-    class: "Wizard",
-    color: "#a3e635"
-  },
-  {
-    id: 15,
-    name: "Golem",
-    image: "images/Golem.png",
-    description: "Taştan yapılmış, kalpten hisseden. Konuşmaz ama anlar.",
-    class: "Construct",
-    color: "#78716c"
-  },
-  {
-    id: 16,
-    name: "Döldalf",
-    image: "images/Döldalf ve torunları.png",
-    description: "Bilge büyücü, torunlarıyla birlikte. Asasıyla dünyayı şekillendirdi.",
-    class: "Archmage",
-    color: "#8b5cf6"
-  },
-  {
-    id: 17,
-    name: "İksir Matilda",
-    image: "images/8 iksir Matilda.png",
-    description: "Küçük şişelerde büyük sırlar taşır. Hangi renk ne yapar? O bile tam bilmez.",
-    class: "Alchemist",
-    color: "#a855f7"
-  },
-  {
-    id: 18,
-    name: "Ağır Zırhlı Şövalye",
-    image: "images/Agır zırhlı şövalye.png",
-    description: "Demirden kalın, yürekten daha da kalın. Her adımda zemin titrer.",
-    class: "Heavy Knight",
-    color: "#94a3b8"
-  },
-  {
-    id: 19,
-    name: "Demir Korsan Jack",
-    image: "images/Demir korsan jack.png",
-    description: "Denizlerin yıldızı karaya çıktı. Kılıcı kancasından daha keskin.",
-    class: "Pirate",
-    color: "#0ea5e9"
-  },
-  {
-    id: 20,
-    name: "Fakir Dilenci Kız",
-    image: "images/Fakir dilenci kiz.png",
-    description: "Görünüşe aldanma. Sokakların en zeki gözleri ona aittir.",
-    class: "Rogue",
-    color: "#b45309"
-  },
-  {
-    id: 21,
-    name: "Gazeteci Çocuk",
-    image: "images/Gazeteci çocuk.png",
-    description: "Kaleminden çıkan her sözcük bir ok gibi hedefe saplanır. Gerçeği gizleyemezsin.",
-    class: "Scholar",
-    color: "#f0abfc"
-  },
-  {
-    id: 22,
-    name: "Hancı",
-    image: "images/Hanci(Yusufun hanına gergerdanla girdiği).png",
-    description: "Yusuf'un hanının efsanevi sahibi. Gergedanla giren müşterisini hâlâ unutamadı.",
-    class: "Innkeeper",
-    color: "#c2410c"
-  },
-  {
-    id: 23,
-    name: "Ejderha Avcıları",
-    image: "images/Kam ateşi etrafindaki Ejderha avcisi şovalyeleri.png",
-    description: "Kamp ateşinin etrafında birleşen yiğitler. Her biri bir efsane, hepsi bir ordu.",
-    class: "Dragon Hunters",
-    color: "#b91c1c"
-  },
-  {
-    id: 24,
-    name: "Leydi Lana",
-    image: "images/Leydi Lana ve efendi Rhods.png",
-    description: "Efendi Rhods ile seyahat eder. Nezaketi kılıcından keskin, gülüşü zehirden tatlı.",
-    class: "Noble",
-    color: "#db2777"
-  },
-  {
-    id: 25,
-    name: "Matilda'nın Babası",
-    image: "images/Matildanin Babasi.png",
-    description: "Kızı için her kapıyı kırar, her ejderhayı ezer. Babalık en güçlü büyüdür.",
-    class: "Warrior",
-    color: "#7c3aed"
-  },
-  {
-    id: 26,
-    name: "Taş Gibi Elfler",
-    image: "images/Taş gibi 5 elf.png",
-    description: "Beş elf, tek bir nefes gibi hareket eder. Ormanda kaybolmuşsalar, sen zaten mahvolmuşsundur.",
-    class: "Elf Squad",
-    color: "#16a34a"
-  },
-  {
-    id: 27,
-    name: "Ted (Sonrası)",
-    image: "images/Ted(Ailesini terk ettikten sonra).png",
-    description: "Ailesini terk ettikten sonra değişti. Gözlerinde eski sıcaklık yok artık.",
-    class: "Wanderer",
-    color: "#475569"
-  },
-  {
-    id: 28,
-    name: "Usta Jax & Çıraklar",
-    image: "images/Usta Jax ve Çirak Max Çirak Dax.png",
-    description: "Jax öğretir, Max hızlı öğrenir, Dax her şeyi tersine yapar. Üçü de mükemmel.",
-    class: "Artisan Trio",
-    color: "#d97706"
-  },
-  {
-    id: 29,
-    name: "William'ın Şövalyeleri",
-    image: "images/William' in 2 şövalyesi.png",
-    description: "Kasabanın koruyucuları. İkisi bir arada oldukça hiçbir tehlike yaklaşamaz.",
-    class: "Knights",
-    color: "#1d4ed8"
-  },
-  {
-    id: 30,
-    name: "Zeyno & Çocuklar",
-    image: "images/Zeyno ve 3 cocuk.png",
-    description: "Üç çocuğu ile dünyanın dört bir yanını gezer. Neşe onların silahı.",
-    class: "Guardian",
-    color: "#0891b2"
-  },
-  {
-    id: 31,
-    name: "Döldalf (Zindanda)",
-    image: "images/döldalf zindanda.png",
-    description: "Zindan onu durduramadı. Asasını kaybetmiş ama gücünü kaybetmemiş.",
-    class: "Archmage",
-    color: "#7e22ce"
-  },
-  {
-    id: 32,
-    name: "Ejder Dalgalı",
-    image: "images/ejder dalgali.png",
-    description: "Dalgalar gibi gelir, ejder gibi vurur. Denizin derinliklerinden yükselen güç.",
-    class: "Sea Dragon",
-    color: "#0284c7"
-  },
-  {
-    id: 33,
-    name: "Kasaba Şefi William",
-    image: "images/kasaba şefi william.png",
-    description: "Herkesi tanır, her şeyi bilir. Kasabanın ruhu ve vazgeçilmez lideri.",
-    class: "Town Chief",
-    color: "#92400e"
-  },
-  {
-    id: 34,
-    name: "6 Şövalye (Kamp)",
-    image: "images/6 Şövalye kamp(Tyrelin dovustugu).png",
-    description: "Tyrel'in dövüştüğü o efsanevi kamp gecesi. Altı şövalye, bir ateş, sonsuz hikaye.",
-    class: "Warrior Band",
-    color: "#b45309"
-  },
-  {
-    id: 35,
-    name: "Atlı Şövalyeler",
-    image: "images/sokakta 6 tane Atlı şövalye(1. bolum).png",
-    description: "Birinci bölümün açılış sahnesi. Sokakları dolduran bu altı süvari masumiyetin sonu oldu.",
-    class: "Cavalry",
-    color: "#4f46e5"
-  }
-];
+// dndCharacters dizisi artık js/modules/dnd.js içinde tanımlıdır.
 
-// Link karakter dizisini categories nesnesine bagla
-categories.dnd.characters = dndCharacters;
+// dnd.js yüklendikten sonra bağlantı init() içinde kurulur.
 
+
+    
 /* =====================================================
    SECTION 3: TOURNAMENT STATE
    ===================================================== */
@@ -418,7 +179,15 @@ function shuffle(arr) {
 }
 
 function showSection(sectionEl) {
-  [dom.heroSection(), dom.arenaSection(), dom.championSection()].forEach(el => {
+  [
+    dom.heroSection(),
+    dom.arenaSection(),
+    dom.championSection(),
+    document.getElementById("podcasts-section"),
+    document.getElementById("audio-vault-section"),
+    document.getElementById("season1-section"),
+    document.getElementById("season2-section")
+  ].forEach(el => {
     if (el) el.classList.add("hidden");
   });
   if (sectionEl) sectionEl.classList.remove("hidden");
@@ -526,12 +295,26 @@ function loadCategory(categoryId) {
     case "dnd":
       startTournament(cat.characters);
       break;
+    case "podcast":
+      showSection(document.getElementById("podcasts-section"));
+      if (typeof loadPodcastsSection === "function") loadPodcastsSection();
+      break;
+    case "audio":
+      showSection(document.getElementById("audio-vault-section"));
+      if (typeof loadAudioVaultSection === "function") loadAudioVaultSection();
+      break;
+    case "season1":
+      showSection(document.getElementById("season1-section"));
+      if (typeof loadSeason1Section === "function") loadSeason1Section();
+      break;
+    case "season2":
+      showSection(document.getElementById("season2-section"));
+      if (typeof loadSeason2Section === "function") loadSeason2Section();
+      break;
     case "lol":
-      // İleride: startTournament(lolCharacters); 
       showComingSoonToast(cat.label);
       break;
     case "funny_moments":
-      // İleride: startTournament(funnyMomentsData);
       showComingSoonToast(cat.label);
       break;
     default:
@@ -579,175 +362,11 @@ function showComingSoonToast(label) {
 }
 
 /* =====================================================
-   SECTION 8: TOURNAMENT ENGINE
-   Komut 2 - Turnuva mekaniği
+   SECTION 8–10: TOURNAMENT ENGINE / BRACKET / CHAMPION
+   → Taşındı: js/modules/dnd.js
+   (startTournament, loadNextMatch, vote, advanceToNextRound,
+    updateBracketUI, updateMatchCounter, revealChampion)
    ===================================================== */
-
-/**
- * startTournament(characters)
- * Verilen karakter dizisiyle turnuvayı başlatır.
- * Turnuva mantığı: Son 8 -> Yarı Final (4) -> Final (2) -> Şampiyon
- */
-function startTournament(characters) {
-  if (!characters || characters.length < 2) {
-    console.error("Turnuva icin en az 2 karakter gerekli!");
-    return;
-  }
-
-  // State reset
-  state.pool = shuffle(characters);
-  state.nextPool = [];
-  state.currentRound = 0;
-  state.matchIndex = 0;
-  state.totalMatchesInRound = Math.floor(state.pool.length / 2);
-  state.isAnimating = false;
-
-  // Update UI labels
-  const cat = state.currentCategory || categories.dnd;
-  dom.tournamentCatLabel().textContent = `${cat.icon} ${cat.label}`;
-  dom.championAnnouncement().textContent = cat.announcement;
-
-  // Show arena
-  showSection(dom.arenaSection());
-  updateBracketUI();
-  generateVsSparks();
-
-  // Load first match
-  loadNextMatch();
-}
-
-/**
- * loadNextMatch()
- * Havuzdan bir sonraki eşleşmeyi ekrana getirir.
- * Havuz bitince ya bir sonraki tura geçer ya da şampiyon ilan eder.
- */
-function loadNextMatch() {
-  // Need at least 2 in pool for a match
-  if (state.pool.length < 2) {
-    // If we have 1 left (odd number), it's a bye - advance automatically
-    if (state.pool.length === 1) {
-      state.nextPool.push(state.pool[0]);
-      state.pool = [];
-    }
-    advanceToNextRound();
-    return;
-  }
-
-  // Pop two characters
-  state.leftChar = state.pool.shift();
-  state.rightChar = state.pool.shift();
-
-  updateMatchCounter();
-  renderCharacters();
-}
-
-function renderCharacters() {
-  const L = state.leftChar;
-  const R = state.rightChar;
-
-  // Reset card states
-  [dom.cardLeft(), dom.cardRight()].forEach(card => {
-    card.classList.remove("winner", "loser");
-    card.style.opacity = "";
-    card.style.filter = "";
-  });
-
-  // Left card
-  dom.imgLeft().src  = L.image || getDefaultImage(L);
-  dom.imgLeft().alt  = L.name;
-  dom.nameLeft().textContent  = L.name;
-  dom.descLeft().textContent  = L.description;
-  dom.classLeft().textContent = L.class || "";
-
-  // Right card
-  dom.imgRight().src  = R.image || getDefaultImage(R);
-  dom.imgRight().alt  = R.name;
-  dom.nameRight().textContent  = R.name;
-  dom.descRight().textContent  = R.description;
-  dom.classRight().textContent = R.class || "";
-
-  // Entrance animation
-  [dom.cardLeft(), dom.cardRight()].forEach((card, i) => {
-    card.style.animation = "none";
-    card.style.transform = `translateX(${i === 0 ? "-40px" : "40px"}) scale(0.92)`;
-    card.style.opacity = "0";
-    requestAnimationFrame(() => {
-      card.style.transition = "transform 0.5s cubic-bezier(.4,0,.2,1), opacity 0.5s ease";
-      card.style.transform = "";
-      card.style.opacity = "";
-    });
-  });
-}
-
-/** Fallback placeholder when image is missing */
-function getDefaultImage(char) {
-  // Generate a simple SVG placeholder with the character's color
-  const color = encodeURIComponent(char.color || "#8b5cf6");
-  const initial = encodeURIComponent(char.name ? char.name[0].toUpperCase() : "?");
-  return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><defs><radialGradient id='g' cx='50%25' cy='50%25' r='50%25'><stop offset='0%25' stop-color='${color}' stop-opacity='0.3'/><stop offset='100%25' stop-color='%230f1117'/></radialGradient></defs><rect width='400' height='400' fill='%23131620'/><rect width='400' height='400' fill='url(%23g)'/><text x='200' y='230' text-anchor='middle' dominant-baseline='middle' font-size='120' font-family='serif' fill='${color}' opacity='0.8'>${initial}</text></svg>`;
-}
-
-/**
- * vote(side)
- * Kullanıcı sol ("left") veya sağ ("right") karaktere tıkladığında çağrılır.
- */
-async function vote(side) {
-  if (state.isAnimating) return;
-  state.isAnimating = true;
-
-  const winner = side === "left" ? state.leftChar : state.rightChar;
-  const loser  = side === "left" ? state.rightChar : state.leftChar;
-
-  const winnerCard = side === "left" ? dom.cardLeft() : dom.cardRight();
-  const loserCard  = side === "left" ? dom.cardRight() : dom.cardLeft();
-
-  // Apply visual result
-  winnerCard.classList.add("winner");
-  loserCard.classList.add("loser");
-
-  // Advance winner
-  state.nextPool.push(winner);
-  state.matchIndex++;
-
-  // Wait for animation
-  await sleep(900);
-
-  // Check if round is over
-  if (state.pool.length < 2) {
-    if (state.pool.length === 1) {
-      state.nextPool.push(state.pool[0]);
-      state.pool = [];
-    }
-    await sleep(200);
-    advanceToNextRound();
-  } else {
-    state.isAnimating = false;
-    loadNextMatch();
-  }
-}
-
-/**
- * advanceToNextRound()
- * Turu ilerletir veya şampiyonu ilan eder.
- */
-function advanceToNextRound() {
-  // If only one character left -> champion!
-  if (state.nextPool.length === 1) {
-    revealChampion(state.nextPool[0]);
-    return;
-  }
-
-  // If 2 or more -> next round
-  state.currentRound++;
-  state.pool = shuffle(state.nextPool);
-  state.nextPool = [];
-  state.matchIndex = 0;
-  state.totalMatchesInRound = Math.floor(state.pool.length / 2);
-
-  updateBracketUI();
-  state.isAnimating = false;
-  loadNextMatch();
-}
 
 /* =====================================================
    SECTION 9: BRACKET & PROGRESS UI
@@ -919,19 +538,74 @@ function goHome() {
 }
 
 /* =====================================================
-   SECTION 12: INIT
+   SECTION 12: SIDEBAR
+   ===================================================== */
+
+function setupSidebar() {
+  const toggleBtn  = document.getElementById("sidebar-toggle");
+  const sidebar    = document.getElementById("sidebar");
+  const overlay    = document.getElementById("sidebar-overlay");
+  const closeBtn   = document.getElementById("sidebar-close");
+
+  if (!toggleBtn || !sidebar || !overlay) return;
+
+  function openSidebar() {
+    sidebar.classList.add("sidebar-open");
+    overlay.classList.add("overlay-visible");
+    toggleBtn.classList.add("is-open");
+    toggleBtn.setAttribute("aria-expanded", "true");
+  }
+
+  function closeSidebar() {
+    sidebar.classList.remove("sidebar-open");
+    overlay.classList.remove("overlay-visible");
+    toggleBtn.classList.remove("is-open");
+    toggleBtn.setAttribute("aria-expanded", "false");
+  }
+
+  toggleBtn.addEventListener("click", () => {
+    sidebar.classList.contains("sidebar-open") ? closeSidebar() : openSidebar();
+  });
+
+  if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+  overlay.addEventListener("click", closeSidebar);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeSidebar();
+  });
+
+  // Sidebar nav items
+  document.querySelectorAll(".sidebar-item[data-category]").forEach(item => {
+    item.addEventListener("click", () => {
+      if (item.classList.contains("sidebar-locked")) return;
+      const catId = item.dataset.category;
+      closeSidebar();
+      loadCategory(catId);
+    });
+  });
+}
+
+/* =====================================================
+   SECTION 13: INIT
    ===================================================== */
 
 function init() {
   setupNavbar();
   setupButtons();
+  setupSidebar();
+  setupUploadModule();
   generateParticles();
+
+  // Link dndCharacters (defined in dnd.js) to categories
+  if (typeof dndCharacters !== "undefined") {
+    categories.dnd.characters = dndCharacters;
+  }
 
   // Show hero section by default
   showSection(dom.heroSection());
 
   console.log(
-    "%cFeroFUFU Tournament System v1.0\n%c🎭 Litvus'un Soytarilari ready!",
+    "%cFeroFUFU Platform v2.0\n%c🎭 Litvus'un Soytarilari + Sidebar + Upload ready!",
     "color:#8b5cf6;font-size:16px;font-weight:bold;",
     "color:#10b981;font-size:12px;"
   );

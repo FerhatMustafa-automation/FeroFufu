@@ -1,0 +1,550 @@
+/* =====================================================
+   FeroFUFU – css/video-gallery.css
+   Sezon 1 & Sezon 2 Video Galerisi Stilleri
+   Netflix/YouTube tarzı Premium Tasarım
+   ===================================================== */
+
+/* ---- Section Wrapper ---- */
+.video-section {
+  min-height: 100vh;
+  padding: 90px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.video-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, var(--vs-glow-top, rgba(139,92,246,0.15)) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 90%, var(--vs-glow-bottom, rgba(6,182,212,0.06)) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sezon 1 – mor/safir */
+#season1-section {
+  --vs-accent:        #8b5cf6;
+  --vs-accent-2:      #06b6d4;
+  --vs-accent-glow:   rgba(139,92,246,0.45);
+  --vs-glow-top:      rgba(139,92,246,0.18);
+  --vs-glow-bottom:   rgba(6,182,212,0.08);
+  --vs-badge-bg:      rgba(139,92,246,0.18);
+  --vs-badge-border:  rgba(139,92,246,0.4);
+  --vs-badge-color:   #c4b5fd;
+  --vs-card-active:   rgba(139,92,246,0.25);
+  --vs-grad-hero:     linear-gradient(135deg, #7c3aed, #0891b2);
+}
+
+/* Sezon 2 – kırmızı/turuncu */
+#season2-section {
+  --vs-accent:        #ef4444;
+  --vs-accent-2:      #f97316;
+  --vs-accent-glow:   rgba(239,68,68,0.45);
+  --vs-glow-top:      rgba(239,68,68,0.15);
+  --vs-glow-bottom:   rgba(249,115,22,0.08);
+  --vs-badge-bg:      rgba(239,68,68,0.15);
+  --vs-badge-border:  rgba(239,68,68,0.4);
+  --vs-badge-color:   #fca5a5;
+  --vs-card-active:   rgba(239,68,68,0.22);
+  --vs-grad-hero:     linear-gradient(135deg, #dc2626, #ea580c);
+}
+
+/* ---- Back Button ---- */
+.vs-back-btn {
+  position: absolute;
+  top: 70px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50px;
+  color: #94a3b8;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  z-index: 10;
+}
+.vs-back-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.2);
+  color: #e2d9f3;
+  transform: translateX(-3px);
+}
+
+/* ---- Section Inner Wrapper ---- */
+.video-section-inner {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* =====================================================
+   SECTION HEADER
+   ===================================================== */
+.vs-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.vs-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: var(--vs-badge-bg);
+  border: 1px solid var(--vs-badge-border);
+  border-radius: 50px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vs-badge-color);
+  margin-bottom: 4px;
+}
+
+.vs-header-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 4.5vw, 3rem);
+  font-weight: 900;
+  color: #e2d9f3;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.vs-header-title .vs-accent-text {
+  background: var(--vs-grad-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px var(--vs-accent-glow));
+}
+
+.vs-header-subtitle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  color: #475569;
+  max-width: 500px;
+}
+
+/* =====================================================
+   MAIN PLAYER
+   ===================================================== */
+.vs-main-player {
+  width: 100%;
+  background: linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow:
+    0 24px 80px rgba(0,0,0,0.6),
+    0 0 0 1px rgba(255,255,255,0.03),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  position: relative;
+}
+
+/* Glow accent on top edge when active */
+.vs-main-player::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--vs-grad-hero);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 2;
+}
+.vs-main-player.has-video::before { opacity: 1; }
+
+/* 16:9 iframe container */
+.vs-iframe-wrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  position: relative;
+}
+
+.vs-iframe-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+}
+
+/* Empty state (no episode selected yet) */
+.vs-player-empty {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
+  color: #334155;
+}
+
+.vs-player-empty-icon {
+  font-size: 4rem;
+  opacity: 0.4;
+  animation: vs-float 4s ease-in-out infinite;
+}
+
+@keyframes vs-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+
+.vs-player-empty-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  color: #334155;
+  text-align: center;
+}
+
+/* Player info bar */
+.vs-player-info {
+  padding: 18px 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.vs-player-ep-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--vs-accent);
+  margin-bottom: 4px;
+}
+
+.vs-player-ep-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e2d9f3;
+  line-height: 1.3;
+}
+
+.vs-player-ep-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  color: #475569;
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.vs-player-ep-date {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  color: #334155;
+  white-space: nowrap;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* =====================================================
+   EPISODE GRID
+   ===================================================== */
+.vs-grid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.vs-grid-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #475569;
+}
+
+.vs-episode-count {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.7rem;
+  color: var(--vs-badge-color);
+  background: var(--vs-badge-bg);
+  border: 1px solid var(--vs-badge-border);
+  padding: 2px 10px;
+  border-radius: 20px;
+}
+
+/* Grid */
+.vs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+/* ---- Episode Card ---- */
+.vs-card {
+  background: rgba(16, 11, 10, 0.88);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 159, 28, 0.35);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  group: true;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
+
+.vs-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: color-mix(in srgb, var(--vs-accent) 60%, transparent);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,0.8),
+    0 0 0 1px color-mix(in srgb, var(--vs-accent) 20%, transparent),
+    0 0 30px color-mix(in srgb, var(--vs-accent-glow) 30%, transparent);
+}
+
+.vs-card.active {
+  border-color: var(--vs-accent);
+  background: var(--vs-card-active);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    0 0 0 1px var(--vs-accent),
+    0 0 20px var(--vs-accent-glow);
+}
+
+/* Card Thumbnail */
+.vs-card-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.3));
+  position: relative;
+  overflow: hidden;
+}
+
+.vs-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.vs-card:hover .vs-card-thumb img { transform: scale(1.05); }
+
+/* Thumbnail placeholder */
+.vs-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(0,0,0,0.2));
+}
+
+/* Play overlay */
+.vs-card-play-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.vs-card:hover .vs-card-play-overlay { opacity: 1; }
+
+.vs-play-circle {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255,255,255,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transform: scale(0.8);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.vs-card:hover .vs-play-circle { transform: scale(1); }
+
+/* Episode number badge */
+.vs-ep-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #e2d9f3;
+  letter-spacing: 0.05em;
+}
+
+.vs-card.active .vs-ep-badge {
+  background: var(--vs-accent);
+  border-color: var(--vs-accent);
+  color: #fff;
+}
+
+/* NOW PLAYING indicator */
+.vs-now-playing {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  border-radius: 20px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--vs-accent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.vs-card.active .vs-now-playing { opacity: 1; }
+
+/* Card body */
+.vs-card-body {
+  padding: 14px 16px;
+}
+
+.vs-card-ep-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--vs-accent);
+  margin-bottom: 4px;
+}
+
+.vs-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #FDF0D5;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+.vs-card:hover .vs-card-title,
+.vs-card.active .vs-card-title { color: #fff; }
+
+.vs-card-desc {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  color: #D8C4A0;
+  line-height: 1.4;
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.vs-card-date {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.65rem;
+  color: rgba(216, 196, 160, 0.6);
+  margin-top: 8px;
+}
+
+/* ---- Empty Grid State ---- */
+.vs-grid-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #334155;
+  font-family: 'Outfit', sans-serif;
+}
+.vs-grid-empty span {
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 14px;
+  opacity: 0.4;
+}
+.vs-grid-empty p { font-size: 0.9rem; line-height: 1.6; }
+
+/* =====================================================
+   VIDEO FORM FIELDS (Upload Modal)
+   ===================================================== */
+.video-link-preview {
+  margin-top: 8px;
+  padding: 10px 14px;
+  background: rgba(16,185,129,0.07);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.72rem;
+  color: #34d399;
+  display: none;
+  word-break: break-all;
+  line-height: 1.5;
+}
+.video-link-preview.preview-show { display: block; }
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+@media (max-width: 768px) {
+  .video-section {
+    padding: 80px 16px 60px;
+    gap: 28px;
+  }
+  .vs-back-btn { top: 62px; left: 16px; }
+  .vs-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+  }
+  .vs-player-info {
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vs-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .vs-header-title { font-size: 1.6rem; }
+}
