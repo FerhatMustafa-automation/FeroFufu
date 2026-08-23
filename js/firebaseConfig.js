@@ -19,10 +19,17 @@
  */
 
 window.FIREBASE_CONFIG = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+
+  apiKey: "AIzaSyCpdG4e6-9Bhf4vxkZc-O6tb6Ssm8TqKUk",
+
+  authDomain: "ferofufu-5268c.firebaseapp.com",
+
+  projectId: "ferofufu-5268c",
+
+  storageBucket: "ferofufu-5268c.firebasestorage.app",
+
+  messagingSenderId: "560190451699",
+
+  appId: "1:560190451699:web:4eecec6d2874ea21b92c86",
+
 };
