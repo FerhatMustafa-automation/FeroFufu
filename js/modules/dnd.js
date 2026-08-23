@@ -307,12 +307,18 @@ let dndCharacters = (function() {
 })();
 
 function getDndCharacters() {
+  if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+    const cloudChars = window.FeroDB.getItems("dnd", []);
+    if (cloudChars.length > 0) return cloudChars;
+  }
   return dndCharacters;
 }
 
 function saveDndCharacters(chars) {
   try {
-    if (window.feroMedia && typeof window.feroMedia.safeSave === 'function') {
+    if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+      window.FeroDB.saveCollection("dnd", chars);
+    } else if (window.feroMedia && typeof window.feroMedia.safeSave === 'function') {
       window.feroMedia.safeSave(DND_KEY, JSON.stringify(chars));
     } else {
       localStorage.setItem(DND_KEY, JSON.stringify(chars));
@@ -325,6 +331,16 @@ function saveDndCharacters(chars) {
     console.warn("[DnD] localStorage yazma hatası:", e);
   }
 }
+
+// Canlı bulut güncellemelerini dinle
+window.addEventListener("ferofufu_cloud_update", function(e) {
+  if (e.detail && e.detail.collection === "dnd") {
+    dndCharacters = e.detail.items;
+    if (typeof categories !== "undefined" && categories.dnd) {
+      categories.dnd.characters = e.detail.items;
+    }
+  }
+});
 
 /* =====================================================
    TOURNAMENT ENGINE

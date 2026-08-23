@@ -36,9 +36,12 @@ const DEFAULT_AUDIO_VAULT = [
 ];
 
 /* -------------------------------------------------------
-   STORAGE HELPERS
+   STORAGE HELPERS (FeroDB Cloud + Local Cache)
    ------------------------------------------------------- */
 function getAudioVaultTracks() {
+  if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+    return window.FeroDB.getItems("audio", DEFAULT_AUDIO_VAULT);
+  }
   try {
     const raw = localStorage.getItem(AUDIO_VAULT_KEY);
     if (raw) {
@@ -52,6 +55,10 @@ function getAudioVaultTracks() {
 }
 
 function saveAudioVaultTracks(tracks) {
+  if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+    window.FeroDB.saveCollection("audio", tracks);
+    return;
+  }
   try {
     localStorage.setItem(AUDIO_VAULT_KEY, JSON.stringify(tracks));
   } catch (e) {
@@ -65,9 +72,25 @@ function _addAudioVaultTrackToStorage(track) {
   const custom  = tracks.filter(t => !t.id.startsWith("av-"));
   custom.push(track);
   const merged = [...demos, ...custom];
-  saveAudioVaultTracks(merged);
+  
+  if (window.FeroDB && typeof window.FeroDB.saveItem === "function") {
+    window.FeroDB.saveItem("audio", track);
+  } else {
+    saveAudioVaultTracks(merged);
+  }
   return merged;
 }
+
+// Canlı bulut güncellemelerini dinle
+window.addEventListener("ferofufu_cloud_update", function(e) {
+  if (e.detail && e.detail.collection === "audio") {
+    audioVaultState.tracks = e.detail.items;
+    const section = document.getElementById("audio-section");
+    if (section && !section.classList.contains("hidden")) {
+      _renderAudioVaultTrackList();
+    }
+  }
+});
 
 /* -------------------------------------------------------
    PLAYER STATE

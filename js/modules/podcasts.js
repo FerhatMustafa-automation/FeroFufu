@@ -36,9 +36,12 @@ const DEFAULT_PODCASTS = [
 ];
 
 /* -------------------------------------------------------
-   STORAGE HELPERS
+   STORAGE HELPERS (FeroDB Cloud + Local Cache)
    ------------------------------------------------------- */
 function getPodcasts() {
+  if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+    return window.FeroDB.getItems("podcast", DEFAULT_PODCASTS);
+  }
   try {
     const raw = localStorage.getItem(PODCASTS_KEY);
     if (raw) {
@@ -52,6 +55,10 @@ function getPodcasts() {
 }
 
 function savePodcasts(tracks) {
+  if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+    window.FeroDB.saveCollection("podcast", tracks);
+    return;
+  }
   try {
     localStorage.setItem(PODCASTS_KEY, JSON.stringify(tracks));
   } catch (e) {
@@ -61,14 +68,29 @@ function savePodcasts(tracks) {
 
 function addPodcastTrack(track) {
   const tracks = getPodcasts();
-  // Demo parçaları korumadan gerçek parça ekleniyor
   const existing = tracks.filter(t => !t.id.startsWith("pod-"));
   existing.push(track);
-  // Demo parçalar ile birleştir
   const demos = tracks.filter(t => t.id.startsWith("pod-"));
-  savePodcasts([...demos, ...existing]);
-  return [...demos, ...existing];
+  const merged = [...demos, ...existing];
+  
+  if (window.FeroDB && typeof window.FeroDB.saveItem === "function") {
+    window.FeroDB.saveItem("podcast", track);
+  } else {
+    savePodcasts(merged);
+  }
+  return merged;
 }
+
+// Canlı bulut güncellemelerini dinle
+window.addEventListener("ferofufu_cloud_update", function(e) {
+  if (e.detail && e.detail.collection === "podcast") {
+    podcastState.tracks = e.detail.items;
+    const section = document.getElementById("podcasts-section");
+    if (section && !section.classList.contains("hidden")) {
+      _renderPodcastTrackList();
+    }
+  }
+});
 
 /* -------------------------------------------------------
    PLAYER STATE

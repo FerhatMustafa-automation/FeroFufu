@@ -112,6 +112,9 @@ function clearAdminPasswordError() {
 
 // 3. Inline Delete & Edit common logic
 function _getItemsByCategory(category) {
+  if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+    return window.FeroDB.getItems(category, []);
+  }
   switch (category) {
     case "dnd": return typeof getDndCharacters === 'function' ? getDndCharacters() : [];
     case "podcast": return typeof getPodcasts === 'function' ? getPodcasts() : [];
@@ -135,6 +138,10 @@ function _getItemsByCategory(category) {
 }
 
 function _saveItemsByCategory(category, items) {
+  if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+    window.FeroDB.saveCollection(category, items);
+    return;
+  }
   switch (category) {
     case "dnd": if(typeof saveDndCharacters === 'function') saveDndCharacters(items); break;
     case "podcast": if(typeof savePodcasts === 'function') savePodcasts(items); break;
@@ -160,14 +167,17 @@ function _saveItemsByCategory(category, items) {
   }
 }
 
-window.inlineDelete = function(id, category, event) {
+window.inlineDelete = async function(id, category, event) {
   if (event) event.stopPropagation(); // prevent triggering parent clicks
   if (!confirm("Bu içeriği silmek istediğinize emin misiniz?")) return;
 
-  const items = _getItemsByCategory(category);
-  const updated = items.filter(item => String(item.id) !== String(id));
-  
-  _saveItemsByCategory(category, updated);
+  if (window.FeroDB && typeof window.FeroDB.deleteItem === "function") {
+    await window.FeroDB.deleteItem(category, id);
+  } else {
+    const items = _getItemsByCategory(category);
+    const updated = items.filter(item => String(item.id) !== String(id));
+    _saveItemsByCategory(category, updated);
+  }
   
   // Refresh UI
   if(category === "dnd" && typeof startTournament === 'function' && typeof categories !== 'undefined' && categories?.dnd?.active) {

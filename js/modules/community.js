@@ -72,8 +72,11 @@ const FeroCommunity = (function () {
     return typeof checkAdminStatus === "function" && checkAdminStatus();
   }
 
-  /* ---------- Data Getters / Setters ---------- */
+  /* ---------- Data Getters / Setters (FeroDB Cloud + Local Cache) ---------- */
   function getTournaments() {
+    if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+      return window.FeroDB.getItems("tournament", []);
+    }
     try {
       const raw = localStorage.getItem(TOURNAMENTS_KEY);
       if (raw) {
@@ -87,6 +90,10 @@ const FeroCommunity = (function () {
   }
 
   function getTierLists() {
+    if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+      const items = window.FeroDB.getItems("tierlist", []);
+      if (items.length > 0) return items;
+    }
     try {
       const raw = localStorage.getItem(TIERLISTS_KEY);
       if (raw) {
@@ -102,6 +109,10 @@ const FeroCommunity = (function () {
   }
 
   function saveTierLists(list) {
+    if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+      window.FeroDB.saveCollection("tierlist", list);
+      return { success: true };
+    }
     if (window.feroMedia && window.feroMedia.safeSave) {
       return window.feroMedia.safeSave(TIERLISTS_KEY, JSON.stringify(list));
     }
@@ -114,6 +125,10 @@ const FeroCommunity = (function () {
   }
 
   function saveTournaments(list) {
+    if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+      window.FeroDB.saveCollection("tournament", list);
+      return { success: true };
+    }
     if (window.feroMedia && window.feroMedia.safeSave) {
       return window.feroMedia.safeSave(TOURNAMENTS_KEY, JSON.stringify(list));
     }
@@ -124,6 +139,16 @@ const FeroCommunity = (function () {
       return { success: false, error: e.message };
     }
   }
+
+  // Canlı bulut güncellemelerini dinle
+  window.addEventListener("ferofufu_cloud_update", function(e) {
+    if (e.detail && (e.detail.collection === "tournament" || e.detail.collection === "tierlist")) {
+      const container = document.getElementById("community-section");
+      if (container && !container.classList.contains("hidden")) {
+        render();
+      }
+    }
+  });
 
   /* ---------- Initialization & Render ---------- */
   function init() {

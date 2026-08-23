@@ -22,6 +22,9 @@ const FufuMaker = (function () {
 
   /* ---------- LocalStorage Helpers ---------- */
   function getCustomTournaments() {
+    if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+      return window.FeroDB.getItems("tournament", []);
+    }
     try {
       const data = localStorage.getItem(STORAGE_KEY);
       return data ? JSON.parse(data) : [];
@@ -32,6 +35,10 @@ const FufuMaker = (function () {
   }
 
   function saveCustomTournaments(list) {
+    if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+      window.FeroDB.saveCollection("tournament", list);
+      return { success: true };
+    }
     if (window.feroMedia && window.feroMedia.safeSave) {
       return window.feroMedia.safeSave(STORAGE_KEY, JSON.stringify(list));
     }

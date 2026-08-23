@@ -9,6 +9,7 @@
   - 🎄 **Yılbaşı Podcastleri** -> `js/modules/podcasts.js`
   - 🎙️ **Epik Ses Kayıtları (Audio Vault)** -> `js/modules/audioVault.js`
   - 🎥 **Litvus Sezon 1 & Sezon 2 Video Galerileri** -> `js/modules/season1.js`, `js/modules/season2.js`
+  - ☁️ **Bulut Veritabanı & Canlı Senkronizasyon** -> `js/modules/cloudDB.js`, `js/firebaseConfig.js` (Firebase Firestore real-time senkronizasyon + localStorage fallback)
   - 🔒 **Güvenli Kimlik Doğrulama Modülü** -> `js/modules/auth.js` (Salted SHA-256 kriptografik doğrulama, token tabanlı oturum, brute-force koruması)
   - ⚙️ **Canlı Yönetim Modu (Admin Panel)** -> `js/modules/admin.js` (Kriptografik oturum, inline edit ve silme)
   - 🖼️ **Canvas Görsel Sıkıştırma ve Depolama** -> `js/modules/db.js`
@@ -31,7 +32,9 @@ FeroFufu/
 │   ├── video-gallery.css (Sezon video galerileri)
 │   └── admin.css         (Yönetici paneli stilleri)
 ├── js/
+│   ├── firebaseConfig.js (Firebase Firestore bağlantı ayarları)
 │   ├── modules/
+│   │   ├── cloudDB.js    (Bulut veritabanı CRUD & Real-time senkronizasyon motoru)
 │   │   ├── auth.js       (Salted SHA-256 kriptografik auth & oturum güvenliği)
 │   │   ├── db.js         (Canvas görsel sıkıştırma & güvenli localStorage)
 │   │   ├── dnd.js        (DnD 35 karakter havuzu ve 1v1 turnuva motoru)

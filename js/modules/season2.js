@@ -43,9 +43,12 @@ const DEFAULT_S2_EPISODES = [
 ];
 
 /* -------------------------------------------------------
-   STORAGE HELPERS
+   STORAGE HELPERS (FeroDB Cloud + Local Cache)
    ------------------------------------------------------- */
 function getSeason2Episodes() {
+  if (window.FeroDB && typeof window.FeroDB.getItems === "function") {
+    return window.FeroDB.getItems("season2", DEFAULT_S2_EPISODES);
+  }
   try {
     const raw = localStorage.getItem(S2_KEY);
     if (raw) {
@@ -59,6 +62,10 @@ function getSeason2Episodes() {
 }
 
 function saveSeason2Episodes(eps) {
+  if (window.FeroDB && typeof window.FeroDB.saveCollection === "function") {
+    window.FeroDB.saveCollection("season2", eps);
+    return;
+  }
   try {
     localStorage.setItem(S2_KEY, JSON.stringify(eps));
   } catch (e) {
@@ -74,9 +81,27 @@ function _addS2EpisodeToStorage(ep) {
   ep.episodeNum = ep.episodeNum || nextNum;
   custom.push(ep);
   const merged = [...demos, ...custom];
-  saveSeason2Episodes(merged);
+  
+  if (window.FeroDB && typeof window.FeroDB.saveItem === "function") {
+    window.FeroDB.saveItem("season2", ep);
+  } else {
+    saveSeason2Episodes(merged);
+  }
   return merged;
 }
+
+// Canlı bulut güncellemelerini dinle
+window.addEventListener("ferofufu_cloud_update", function(e) {
+  if (e.detail && e.detail.collection === "season2") {
+    s2State.episodes = e.detail.items;
+    const section = document.getElementById("season2-section");
+    if (section && !section.classList.contains("hidden")) {
+      _renderS2Grid();
+      const count = document.getElementById("s2-ep-count");
+      if (count) count.textContent = `${s2State.episodes.length} Bölüm`;
+    }
+  }
+});
 
 /* -------------------------------------------------------
    MODULE STATE

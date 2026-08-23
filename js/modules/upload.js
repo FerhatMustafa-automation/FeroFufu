@@ -200,7 +200,7 @@ function convertToYouTubeEmbed(rawUrl) {
     if (u.protocol !== "http:" && u.protocol !== "https:") {
       return "";
     }
-    const host = u.hostname.replace("www.", "");
+    const host = u.hostname.replace("www.", "").toLowerCase();
 
     // --- YouTube: watch?v=ID ---
     if ((host === "youtube.com" || host === "m.youtube.com") && u.pathname === "/watch") {
@@ -221,20 +221,30 @@ function convertToYouTubeEmbed(rawUrl) {
 
     // --- YouTube: shorts ---
     if (host === "youtube.com" && u.pathname.startsWith("/shorts/")) {
-      const vid = u.pathname.replace("/shorts/", "").split("/")[0];
+      const vid = u.pathname.replace("/shorts/", "").split("/")[0].split("?")[0];
       if (vid) return `https://www.youtube.com/embed/${vid}`;
     }
 
-    // --- Google Drive: /file/d/ID/view → /file/d/ID/preview ---
-    if (host === "drive.google.com" && u.pathname.includes("/view")) {
-      return url.replace(/\/view(\?.*)?$/, "/preview");
-    }
-    if (host === "drive.google.com" && u.pathname.includes("/preview")) {
-      return url; // zaten preview
+    // --- Google Drive Destekleri (Tüm formatlar) ---
+    if (host === "drive.google.com" || host === "docs.google.com") {
+      // 1. /file/d/FILE_ID/... formatı
+      const fileMatch = u.pathname.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (fileMatch && fileMatch[1]) {
+        return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+      }
+      // 2. ?id=FILE_ID formatı (open?id=, uc?id=)
+      const idParam = u.searchParams.get("id");
+      if (idParam) {
+        return `https://drive.google.com/file/d/${idParam}/preview`;
+      }
+      // 3. /d/FILE_ID formatı
+      const dMatch = u.pathname.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      if (dMatch && dMatch[1]) {
+        return `https://drive.google.com/file/d/${dMatch[1]}/preview`;
+      }
     }
 
   } catch (e) {
-    // URL parse başarısız – olduğu gibi döndür
     console.warn("[Upload] URL parse hatası:", e);
   }
 
@@ -489,7 +499,7 @@ async function handleUploadSubmit(event) {
       });
 
       const character = {
-        id: Date.now(),
+        id: `dnd-${Date.now()}`,
         name: title,
         description: desc || "",
         image: compressedDataUrl,  // Sıkıştırılmış Base64 — doğrudan img.src olarak kullanılır
@@ -497,7 +507,9 @@ async function handleUploadSubmit(event) {
         color: "#8b5cf6"
       };
 
-      if (typeof getDndCharacters === 'function' && typeof saveDndCharacters === 'function') {
+      if (window.FeroDB && typeof window.FeroDB.saveItem === "function") {
+        window.FeroDB.saveItem("dnd", character);
+      } else if (typeof getDndCharacters === 'function' && typeof saveDndCharacters === 'function') {
         const chars = getDndCharacters();
         chars.push(character);
         saveDndCharacters(chars);
@@ -535,6 +547,9 @@ function _saveAudioEntry(category, title, desc, url, statusEl) {
   };
 
   try {
+    if (window.FeroDB && typeof window.FeroDB.saveItem === "function") {
+      window.FeroDB.saveItem(category, track);
+    }
     if (category === "podcast" && typeof addPodcastFromUpload === "function") {
       addPodcastFromUpload(track);
     } else if (category === "audio" && typeof addAudioVaultFromUpload === "function") {
@@ -568,6 +583,9 @@ function _saveVideoEpisode(category, title, desc, embedUrl, statusEl, thumbnailD
   };
 
   try {
+    if (window.FeroDB && typeof window.FeroDB.saveItem === "function") {
+      window.FeroDB.saveItem(category, ep);
+    }
     if (category === "season1" && typeof addSeason1FromUpload === "function") {
       addSeason1FromUpload(ep);
     } else if (category === "season2" && typeof addSeason2FromUpload === "function") {
