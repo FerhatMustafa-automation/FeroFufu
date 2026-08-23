@@ -46,9 +46,6 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-main {
-  padding-top: 20px;
-}
 
 body {
   background-color: var(--bg-primary);
@@ -377,9 +374,6 @@ img { display: block; max-width: 100%; }
   pointer-events: none;
   transition: opacity var(--transition-med);
 }
-
-.lol-glow  { background: radial-gradient(circle, rgba(6,182,212,0.1) 0%, transparent 65%); }
-.funny-glow{ background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, transparent 65%); }
 
 .cat-icon {
   font-size: 3.5rem;
@@ -1230,6 +1224,11 @@ img { display: block; max-width: 100%; }
 
   .match-counter { flex-direction: column; gap: 8px; align-items: flex-start; }
 
-  .champion-actions { flex-direction: column; }
   .replay-btn, .home-btn { width: 100%; text-align: center; }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --navbar-h: 56px;
+  }
 }

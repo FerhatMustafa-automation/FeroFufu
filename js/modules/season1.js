@@ -198,7 +198,7 @@ function _renderS1Grid() {
         <p class="vs-card-ep-num">Bölüm ${ep.episodeNum || i+1}</p>
         <p class="vs-card-title">${_s1Esc(ep.title)}</p>
         ${ep.description ? `<p class="vs-card-desc">${_s1Esc(ep.description)}</p>` : ""}
-        <p class="vs-card-date">${ep.addedAt || ""}</p>
+        <p class="vs-card-date">${_s1Esc(ep.addedAt || "")}</p>
       </div>
       ${isAdmin ? `
       <div class="inline-admin-actions">
@@ -260,9 +260,10 @@ function _selectS1Episode(index) {
   if (emptyEl)    emptyEl.style.display    = "none";
   if (iframeWrap) {
     iframeWrap.style.display = "";
+    const safeSrc = (ep.embedUrl && (ep.embedUrl.startsWith('https://') || ep.embedUrl.startsWith('http://') || ep.embedUrl.startsWith('//'))) ? _s1Esc(ep.embedUrl) + (ep.embedUrl.includes('?') ? '&' : '?') + 'rel=0&modestbranding=1&autoplay=1' : '';
     iframeWrap.innerHTML = `
       <iframe
-        src="${_s1Esc(ep.embedUrl)}?rel=0&modestbranding=1&autoplay=1"
+        src="${safeSrc}"
         title="${_s1Esc(ep.title)}"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
@@ -314,5 +315,6 @@ function _s1Esc(str) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }

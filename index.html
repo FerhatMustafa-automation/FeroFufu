@@ -7,13 +7,17 @@
   <meta name="description" content="FeroFUFU – Litvus'un Soytarıları DnD turnuvası, podcastler, ses kayıtları ve daha fazlası. UwUFUFU platformu." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
   <link rel="stylesheet" href="css/modals.css" />
   <link rel="stylesheet" href="css/audio-player.css" />
   <link rel="stylesheet" href="css/video-gallery.css" />
   <link rel="stylesheet" href="css/admin.css" />
+  <link rel="stylesheet" href="css/fufu-maker.css" />
+  <link rel="stylesheet" href="css/tier-maker.css" />
+  <link rel="stylesheet" href="css/community.css" />
+  <link rel="stylesheet" href="css/mobile.css" />
 </head>
 <body>
   <!-- ================================================
@@ -49,6 +53,30 @@
           <span class="sidebar-item-title">DnD Karakter Oylaması</span>
         </div>
         <span class="sidebar-item-badge badge-active">Aktif</span>
+      </div>
+
+      <div class="sidebar-item" data-category="tiermaker" tabindex="0" role="button" id="sidebar-tiermaker">
+        <span class="sidebar-item-icon">📊</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">FeroTier (TierMaker)</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Yeni</span>
+      </div>
+
+      <div class="sidebar-item" data-category="fufumaker" tabindex="0" role="button" id="sidebar-fufumaker">
+        <span class="sidebar-item-icon">✨</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">Turnuva Oluştur (Maker)</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Yeni</span>
+      </div>
+
+      <div class="sidebar-item" data-category="community" tabindex="0" role="button" id="sidebar-community">
+        <span class="sidebar-item-icon">🌍</span>
+        <div class="sidebar-item-info">
+          <span class="sidebar-item-title">Topluluk Galerisi</span>
+        </div>
+        <span class="sidebar-item-badge badge-active">Hub</span>
       </div>
 
       <div class="sidebar-item" data-category="podcast" tabindex="0" role="button" id="sidebar-podcasts">
@@ -111,21 +139,22 @@
 
       <!-- Sağ grup: Nav items + Upload butonu + Hamburger -->
       <div style="display:flex;align-items:center;gap:10px;margin-left:auto;">
-        <button class="hamburger" id="hamburger-btn" aria-label="Menu">
+        <button class="hamburger" id="hamburger-btn" aria-label="Menü" aria-expanded="false" aria-controls="navbar-menu">
           <span></span><span></span><span></span>
         </button>
         <div class="navbar-menu" id="navbar-menu">
-          <span class="menu-label">Kategoriler</span>
+          <span class="menu-label">Kategoriler &amp; Modüller</span>
           <a href="#" class="nav-item active" id="nav-dnd" data-category="dnd">
-            <span class="nav-icon">🎭</span>Litvus'un Soytarilari
+            <span class="nav-icon">🎭</span>Litvus'un Soytarıları
           </a>
-          <a href="#" class="nav-item coming-soon" id="nav-lol" data-category="lol">
-            <span class="nav-icon">⚔️</span>LoL Karakterleri
-            <span class="badge-soon">Yakinda</span>
+          <a href="#" class="nav-item" id="nav-tiermaker" data-category="tiermaker">
+            <span class="nav-icon">📊</span>TierMaker
           </a>
-          <a href="#" class="nav-item coming-soon" id="nav-funny" data-category="funny_moments">
-            <span class="nav-icon">😂</span>Komik Anlar
-            <span class="badge-soon">Yakinda</span>
+          <a href="#" class="nav-item" id="nav-fufumaker" data-category="fufumaker">
+            <span class="nav-icon">✨</span>Turnuva Oluştur
+          </a>
+          <a href="#" class="nav-item" id="nav-community" data-category="community">
+            <span class="nav-icon">🌍</span>Topluluk
           </a>
         </div>
         <button class="nav-admin-btn" id="admin-login-btn" aria-label="Yönetici Paneli">
@@ -150,33 +179,44 @@
       <div class="hero-content">
         <h1 class="hero-title">
           <span class="hero-title-line">Favori Karakterini</span>
-          <span class="hero-title-accent">Sec &amp; Oyla!</span>
+          <span class="hero-title-accent">Seç &amp; Oyla!</span>
         </h1>
-        <p class="hero-subtitle">UwUFUFU turnuva sistemiyle en sevdigin karakteri belirle</p>
+        <p class="hero-subtitle">UwUFUFU turnuva sistemiyle en sevdiğin karakteri belirle veya kendi turnuvanı yarat</p>
         <div class="category-grid" id="category-grid">
           <div class="category-card active" id="cat-dnd" data-category="dnd" tabindex="0">
             <div class="cat-glow"></div>
             <div class="cat-icon">🎭</div>
-            <h2 class="cat-title">Litvus'un Soytarilari</h2>
-            <p class="cat-desc">DnD Seruveni</p>
+            <h2 class="cat-title">Litvus'un Soytarıları</h2>
+            <p class="cat-desc">35 Karakterli 1v1 DnD Turnuvası</p>
             <div class="cat-badge active-badge">✨ Aktif</div>
-            <button class="cat-btn" id="start-dnd-btn" data-category="dnd">Turnuvayi Baslat</button>
+            <button class="cat-btn" id="start-dnd-btn" data-category="dnd">Turnuvayı Başlat</button>
           </div>
-          <div class="category-card locked" id="cat-lol" data-category="lol" tabindex="0">
-            <div class="cat-glow lol-glow"></div>
-            <div class="cat-icon">⚔️</div>
-            <h2 class="cat-title">LoL Karakterleri</h2>
-            <p class="cat-desc">League of Legends</p>
-            <div class="cat-badge soon-badge">🔒 Yakinda</div>
-            <button class="cat-btn disabled" disabled>Yakinda...</button>
+
+          <div class="category-card active" id="cat-tiermaker" data-category="tiermaker" tabindex="0">
+            <div class="cat-glow" style="background: radial-gradient(circle, rgba(16, 185, 129, 0.3) 0%, transparent 70%);"></div>
+            <div class="cat-icon">📊</div>
+            <h2 class="cat-title">FeroTier (TierMaker)</h2>
+            <p class="cat-desc">S/A/B/C/D Katman Listesi Oluştur &amp; İndir</p>
+            <div class="cat-badge active-badge" style="background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4); color: #10b981;">✨ Yeni</div>
+            <button class="cat-btn" id="start-tier-btn" data-category="tiermaker" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">Katman Tablosunu Aç</button>
           </div>
-          <div class="category-card locked" id="cat-funny" data-category="funny_moments" tabindex="0">
-            <div class="cat-glow funny-glow"></div>
-            <div class="cat-icon">😂</div>
-            <h2 class="cat-title">Komik Anlar</h2>
-            <p class="cat-desc">En Iyi Anlar</p>
-            <div class="cat-badge soon-badge">🔒 Yakinda</div>
-            <button class="cat-btn disabled" disabled>Yakinda...</button>
+
+          <div class="category-card active" id="cat-fufumaker" data-category="fufumaker" tabindex="0">
+            <div class="cat-glow" style="background: radial-gradient(circle, rgba(236, 72, 153, 0.3) 0%, transparent 70%);"></div>
+            <div class="cat-icon">✨</div>
+            <h2 class="cat-title">Turnuva Oluşturucu</h2>
+            <p class="cat-desc">Kendi 1v1 FeroFUFU Turnuvanı Tasarla</p>
+            <div class="cat-badge active-badge" style="background: rgba(236, 72, 153, 0.2); border-color: rgba(236, 72, 153, 0.4); color: #ec4899;">✨ Stüdyo</div>
+            <button class="cat-btn" id="start-maker-btn" data-category="fufumaker" style="background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);">Turnuva Yarat</button>
+          </div>
+
+          <div class="category-card active" id="cat-community" data-category="community" tabindex="0">
+            <div class="cat-glow" style="background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);"></div>
+            <div class="cat-icon">🌍</div>
+            <h2 class="cat-title">Topluluk Galerisi</h2>
+            <p class="cat-desc">Kullanıcı Turnuvaları &amp; Katman Listeleri</p>
+            <div class="cat-badge active-badge" style="background: rgba(6, 182, 212, 0.2); border-color: rgba(6, 182, 212, 0.4); color: #06b6d4;">✨ Hub</div>
+            <button class="cat-btn" id="start-community-btn" data-category="community" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">Topluluğu Keşfet</button>
           </div>
         </div>
       </div>
@@ -212,7 +252,7 @@
             <div class="card-glow-effect"></div>
             <div class="card-shine"></div>
             <div class="character-image-wrapper">
-              <img class="character-image" id="char-img-left" src="" alt="" />
+              <img class="character-image" id="char-img-left" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="" />
               <div class="image-overlay"></div>
             </div>
             <div class="character-info">
@@ -230,14 +270,14 @@
           <div class="vs-ring vs-ring-2"></div>
           <div class="vs-ring vs-ring-3"></div>
           <span class="vs-text">VS</span>
-          <div class="vs-sparks" id="vs-sparks"></div>
+          <div class="vs-sparks" id="vs-sparks" aria-hidden="true"></div>
         </div>
         <div class="character-slot" id="char-slot-right">
           <div class="character-card" id="char-card-right" tabindex="0" role="button">
             <div class="card-glow-effect"></div>
             <div class="card-shine"></div>
             <div class="character-image-wrapper">
-              <img class="character-image" id="char-img-right" src="" alt="" />
+              <img class="character-image" id="char-img-right" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="" />
               <div class="image-overlay"></div>
             </div>
             <div class="character-info">
@@ -255,9 +295,9 @@
     </section>
 
     <section class="champion-section hidden" id="champion-section">
-      <div class="confetti-container" id="confetti-container"></div>
+      <div class="confetti-container" id="confetti-container" aria-hidden="true"></div>
       <div class="champion-content">
-        <div class="champion-crown">👑</div>
+        <div class="champion-crown" aria-hidden="true">👑</div>
         <h2 class="champion-announcement" id="champion-announcement">Litvus'un Soytarilari'nin</h2>
         <h1 class="champion-title">En Sevilen Karakteri!</h1>
         <div class="champion-card-wrapper">
@@ -268,7 +308,7 @@
               <span>🌟</span><span>✨</span><span>⭐</span>
             </div>
             <div class="champion-image-wrapper">
-              <img class="champion-image" id="champion-img" src="" alt="" />
+              <img class="champion-image" id="champion-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="" />
             </div>
             <div class="champion-info">
               <h3 class="champion-name" id="champion-name"></h3>
@@ -312,6 +352,27 @@
       <!-- JS tarafından dinamik olarak doldurulur -->
     </section>
 
+    <!-- ================================================
+         FEROFUFU MAKER (ÖZEL TURNUVA OLUŞTURUCU)
+         ================================================ -->
+    <section class="hidden" id="fufu-maker-section" aria-label="FeroFUFU Turnuva Oluşturucu">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
+    <!-- ================================================
+         FEROTIER (TIERMAKER KATMAN TABLOSU)
+         ================================================ -->
+    <section class="hidden" id="tier-maker-section" aria-label="TierMaker Katman Listesi">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
+    <!-- ================================================
+         TOPLULUK GALERİSİ & HUB
+         ================================================ -->
+    <section class="hidden" id="community-section" aria-label="Topluluk Galerisi">
+      <!-- JS tarafından dinamik olarak doldurulur -->
+    </section>
+
   </main>
 
   <footer class="site-footer">
@@ -321,7 +382,7 @@
   <!-- ================================================
        ŞİFRE MODALI
        ================================================ -->
-  <div class="modal-backdrop" id="password-modal" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title">
+  <div class="modal-backdrop" id="password-modal" role="dialog" aria-modal="true" aria-labelledby="pw-modal-title" aria-hidden="true">
     <div class="modal-box">
       <button class="modal-close-btn" id="password-modal-close" aria-label="Kapat">✕</button>
       <span class="pw-modal-icon" role="img" aria-label="Kilit">🔐</span>
@@ -345,7 +406,7 @@
   <!-- ================================================
        İÇERİK YÜKLEME FORMU MODALI
        ================================================ -->
-  <div class="modal-backdrop" id="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title">
+  <div class="modal-backdrop" id="upload-modal" role="dialog" aria-modal="true" aria-labelledby="upload-modal-title" aria-hidden="true">
     <div class="modal-box">
       <button class="modal-close-btn" id="upload-modal-close" aria-label="Kapat">✕</button>
       <div class="upload-modal-header">
@@ -399,7 +460,7 @@
         <div class="form-group">
           <label class="form-label" for="upload-file">Görsel</label>
           <div class="file-input-wrapper">
-            <label class="file-input-label" for="upload-file">
+            <label class="file-input-label">
               <span>🖼️</span>
               <span>Görsel seç veya sürükle bırak...</span>
             </label>
@@ -412,7 +473,7 @@
             />
           </div>
           <div class="upload-preview" id="upload-preview">
-            <img id="upload-preview-img" src="" alt="Önizleme" />
+            <img id="upload-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" alt="Önizleme" />
           </div>
         </div>
 
@@ -436,7 +497,7 @@
         <div class="form-group audio-fields" id="audio-file-group" style="display:none;">
           <label class="form-label" for="upload-audio-file">🎙️ MP3 Dosya Yükle</label>
           <div class="file-input-wrapper">
-            <label class="file-input-label" for="upload-audio-file">
+            <label class="file-input-label">
               <span>🎵</span>
               <span>MP3 dosyası seç...</span>
             </label>
@@ -489,7 +550,7 @@
   <!-- ================================================
        YÖNETİCİ ŞİFRE MODALI
        ================================================ -->
-  <div class="modal-backdrop" id="admin-password-modal" role="dialog" aria-modal="true" aria-labelledby="admin-pw-title">
+  <div class="modal-backdrop" id="admin-password-modal" role="dialog" aria-modal="true" aria-labelledby="admin-pw-title" aria-hidden="true">
     <div class="modal-box">
       <button class="modal-close-btn" id="admin-password-close" aria-label="Kapat">✕</button>
       <span class="pw-modal-icon" role="img" aria-label="Kilit">🛡️</span>
@@ -511,13 +572,44 @@
   </div>
 
   <!-- ================================================
+       MOBİL ALT GEZİNME ÇUBUĞU (BOTTOM NAV BAR)
+       ================================================ -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav" aria-label="Mobil Gezinme">
+    <button class="bottom-nav-item active" data-nav="home" id="bnav-home">
+      <span class="bnav-icon">🏠</span>
+      <span>Ana Sayfa</span>
+    </button>
+    <button class="bottom-nav-item" data-nav="dnd" id="bnav-dnd">
+      <span class="bnav-icon">🎭</span>
+      <span>DnD</span>
+    </button>
+    <button class="bottom-nav-item" data-nav="tiermaker" id="bnav-tier">
+      <span class="bnav-icon">📊</span>
+      <span>TierMaker</span>
+    </button>
+    <button class="bottom-nav-item" data-nav="fufumaker" id="bnav-maker">
+      <span class="bnav-icon">✨</span>
+      <span>Oluştur</span>
+    </button>
+    <button class="bottom-nav-item" data-nav="community" id="bnav-community">
+      <span class="bnav-icon">🌍</span>
+      <span>Topluluk</span>
+    </button>
+  </nav>
+
+  <!-- ================================================
        SCRIPTS
        ================================================ -->
+  <script src="js/modules/auth.js"></script>
+  <script src="js/modules/db.js"></script>
   <script src="js/modules/dnd.js"></script>
   <script src="js/modules/podcasts.js"></script>
   <script src="js/modules/audioVault.js"></script>
   <script src="js/modules/season1.js"></script>
   <script src="js/modules/season2.js"></script>
+  <script src="js/modules/fufuMaker.js"></script>
+  <script src="js/modules/tierMaker.js"></script>
+  <script src="js/modules/community.js"></script>
   <script src="js/modules/upload.js"></script>
   <script src="js/modules/admin.js"></script>
   <script src="script.js"></script>

@@ -5,18 +5,24 @@
 
 "use strict";
 
-const ADMIN_PASSWORD = "boris";
-
-// 1. Session Storage Management
+// 1. Session Storage Management (Delegated to cryptographic FeroAuth)
 function checkAdminStatus() {
-  return sessionStorage.getItem("isAdmin") === "true";
+  return typeof window.FeroAuth !== "undefined" ? window.FeroAuth.isAdmin() : sessionStorage.getItem("isAdmin") === "true";
 }
 
 function setAdminStatus(status) {
-  if (status) {
-    sessionStorage.setItem("isAdmin", "true");
+  if (typeof window.FeroAuth !== "undefined") {
+    if (status) {
+      window.FeroAuth.loginAdmin();
+    } else {
+      window.FeroAuth.logoutAdmin();
+    }
   } else {
-    sessionStorage.removeItem("isAdmin");
+    if (status) {
+      sessionStorage.setItem("isAdmin", "true");
+    } else {
+      sessionStorage.removeItem("isAdmin");
+    }
   }
 }
 
@@ -62,33 +68,35 @@ function closeAdminPasswordModal() {
   clearAdminPasswordError();
 }
 
-function verifyAdminPassword() {
+async function verifyAdminPassword() {
   const input = document.getElementById("admin-password-input");
   const errorEl = document.getElementById("admin-password-error");
   if (!input) return;
 
-  const value = input.value.trim().toLowerCase();
+  const value = input.value;
 
-  if (value === ADMIN_PASSWORD) {
-    clearAdminPasswordError();
-    input.classList.add("input-success");
-    setAdminStatus(true);
-    setTimeout(() => {
-      input.classList.remove("input-success");
-      closeAdminPasswordModal();
-      window.location.reload(); // Reload to apply admin buttons
-    }, 400);
-  } else {
-    if (errorEl) {
-      errorEl.textContent = "❌ Yanlış şifre! (İpucu: boris)";
-      errorEl.classList.add("error-visible");
+  if (typeof window.FeroAuth !== "undefined") {
+    const result = await window.FeroAuth.verifyAdmin(value);
+    if (result.success) {
+      clearAdminPasswordError();
+      input.classList.add("input-success");
+      setTimeout(() => {
+        input.classList.remove("input-success");
+        closeAdminPasswordModal();
+        window.location.reload(); // Reload to apply admin buttons
+      }, 400);
+    } else {
+      if (errorEl) {
+        errorEl.textContent = result.error || "❌ Yanlış şifre! Lütfen tekrar deneyin.";
+        errorEl.classList.add("error-visible");
+      }
+      input.classList.add("input-shake");
+      input.addEventListener("animationend", () => {
+        input.classList.remove("input-shake");
+      }, { once: true });
+      input.value = "";
+      input.focus();
     }
-    input.classList.add("input-shake");
-    input.addEventListener("animationend", () => {
-      input.classList.remove("input-shake");
-    }, { once: true });
-    input.value = "";
-    input.focus();
   }
 }
 
@@ -110,6 +118,18 @@ function _getItemsByCategory(category) {
     case "audio": return typeof getAudioVaultTracks === 'function' ? getAudioVaultTracks() : []; 
     case "season1": return typeof getSeason1Episodes === 'function' ? getSeason1Episodes() : [];
     case "season2": return typeof getSeason2Episodes === 'function' ? getSeason2Episodes() : [];
+    case "tournament": {
+      try {
+        const raw = localStorage.getItem("ferofufu_custom_tournaments");
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+    case "tierlist": {
+      try {
+        const raw = localStorage.getItem("ferofufu_community_tierlists");
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
   }
   return [];
 }
@@ -121,6 +141,22 @@ function _saveItemsByCategory(category, items) {
     case "audio": if(typeof saveAudioVaultTracks === 'function') saveAudioVaultTracks(items); break;
     case "season1": if(typeof saveSeason1Episodes === 'function') saveSeason1Episodes(items); break;
     case "season2": if(typeof saveSeason2Episodes === 'function') saveSeason2Episodes(items); break;
+    case "tournament": {
+      if (window.feroMedia && window.feroMedia.safeSave) {
+        window.feroMedia.safeSave("ferofufu_custom_tournaments", JSON.stringify(items));
+      } else {
+        localStorage.setItem("ferofufu_custom_tournaments", JSON.stringify(items));
+      }
+      break;
+    }
+    case "tierlist": {
+      if (window.feroMedia && window.feroMedia.safeSave) {
+        window.feroMedia.safeSave("ferofufu_community_tierlists", JSON.stringify(items));
+      } else {
+        localStorage.setItem("ferofufu_community_tierlists", JSON.stringify(items));
+      }
+      break;
+    }
   }
 }
 
@@ -134,7 +170,7 @@ window.inlineDelete = function(id, category, event) {
   _saveItemsByCategory(category, updated);
   
   // Refresh UI
-  if(category === "dnd" && typeof startTournament === 'function' && categories.dnd.active) {
+  if(category === "dnd" && typeof startTournament === 'function' && typeof categories !== 'undefined' && categories?.dnd?.active) {
      // Optional reload
   } else if (category === "podcast" && typeof loadPodcastsSection === 'function') {
       loadPodcastsSection();
@@ -144,6 +180,10 @@ window.inlineDelete = function(id, category, event) {
       loadSeason1Section();
   } else if (category === "season2" && typeof loadSeason2Section === 'function') {
       loadSeason2Section();
+  } else if (category === "tournament" || category === "tierlist") {
+      if (window.FeroCommunity && typeof window.FeroCommunity.render === 'function') {
+        window.FeroCommunity.render();
+      }
   }
 }
 
@@ -176,6 +216,16 @@ window.inlineEdit = function(id, category, event) {
         document.getElementById("upload-audio-url").value = item.url || "";
       } else if (category === "season1" || category === "season2") {
         document.getElementById("upload-video-url").value = item.embedUrl || "";
+      }
+
+      const imgDataUrl = item.thumbnail || item.image || "";
+      const preview = document.getElementById("upload-preview");
+      const previewImg = document.getElementById("upload-preview-img");
+      if (imgDataUrl && preview && previewImg) {
+        previewImg.src = imgDataUrl;
+        preview.classList.add("preview-visible");
+      } else if (preview) {
+        preview.classList.remove("preview-visible");
       }
 
       const titleEl = document.getElementById("upload-modal-title");

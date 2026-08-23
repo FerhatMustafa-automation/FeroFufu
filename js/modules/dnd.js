@@ -312,7 +312,11 @@ function getDndCharacters() {
 
 function saveDndCharacters(chars) {
   try {
-    localStorage.setItem(DND_KEY, JSON.stringify(chars));
+    if (window.feroMedia && typeof window.feroMedia.safeSave === 'function') {
+      window.feroMedia.safeSave(DND_KEY, JSON.stringify(chars));
+    } else {
+      localStorage.setItem(DND_KEY, JSON.stringify(chars));
+    }
     dndCharacters = chars;
     if (typeof categories !== "undefined" && categories.dnd) {
       categories.dnd.characters = chars;
@@ -363,6 +367,12 @@ function startTournament(characters) {
  * Havuzdan bir sonraki eşleşmeyi ekrana getirir.
  */
 function loadNextMatch() {
+  if (state.pool.length === 0 && state.nextPool.length === 0) {
+    console.error("[DnD] Turnuva havuzu boş!");
+    state.isAnimating = false;
+    return;
+  }
+
   if (state.pool.length < 2) {
     if (state.pool.length === 1) {
       state.nextPool.push(state.pool[0]);
@@ -415,6 +425,7 @@ function renderCharacters() {
 
 /** Fallback placeholder when image is missing */
 function getDefaultImage(char) {
+  if (!char) char = {};
   const color   = encodeURIComponent(char.color || "#8b5cf6");
   const initial = encodeURIComponent(char.name ? char.name[0].toUpperCase() : "?");
   return `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><defs><radialGradient id='g' cx='50%' cy='50%' r='50%'><stop offset='0%' stop-color='${color}' stop-opacity='0.3'/><stop offset='100%' stop-color='%230f1117'/></radialGradient></defs><rect width='400' height='400' fill='%23131620'/><rect width='400' height='400' fill='url(%23g)'/><text x='200' y='230' text-anchor='middle' dominant-baseline='middle' font-size='120' font-family='serif' fill='${color}' opacity='0.8'>${initial}</text></svg>`;
@@ -426,29 +437,37 @@ function getDefaultImage(char) {
 async function vote(side) {
   if (state.isAnimating) return;
   state.isAnimating = true;
+  const safetyTimer = setTimeout(() => { state.isAnimating = false; }, 5000);
 
-  const winner = side === "left" ? state.leftChar  : state.rightChar;
-  const winnerCard = side === "left" ? dom.cardLeft()  : dom.cardRight();
-  const loserCard  = side === "left" ? dom.cardRight() : dom.cardLeft();
+  try {
+    const winner = side === "left" ? state.leftChar  : state.rightChar;
+    const winnerCard = side === "left" ? dom.cardLeft()  : dom.cardRight();
+    const loserCard  = side === "left" ? dom.cardRight() : dom.cardLeft();
 
-  winnerCard.classList.add("winner");
-  loserCard.classList.add("loser");
+    winnerCard.classList.add("winner");
+    loserCard.classList.add("loser");
 
-  state.nextPool.push(winner);
-  state.matchIndex++;
+    state.nextPool.push(winner);
+    state.matchIndex++;
 
-  await sleep(900);
+    await sleep(900);
 
-  if (state.pool.length < 2) {
-    if (state.pool.length === 1) {
-      state.nextPool.push(state.pool[0]);
-      state.pool = [];
+    if (state.pool.length < 2) {
+      if (state.pool.length === 1) {
+        state.nextPool.push(state.pool[0]);
+        state.pool = [];
+      }
+      await sleep(200);
+      advanceToNextRound();
+    } else {
+      state.isAnimating = false;
+      loadNextMatch();
     }
-    await sleep(200);
-    advanceToNextRound();
-  } else {
+  } catch (err) {
+    console.error('[DnD] Vote error:', err);
     state.isAnimating = false;
-    loadNextMatch();
+  } finally {
+    clearTimeout(safetyTimer);
   }
 }
 

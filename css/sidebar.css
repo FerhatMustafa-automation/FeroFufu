@@ -78,6 +78,7 @@
   position: fixed;
   top: 0;
   left: 0;
+  height: 100vh;
   height: 100dvh;
   width: 290px;
   background: linear-gradient(165deg, #0f1117 0%, #13111f 50%, #0d0f1a 100%);

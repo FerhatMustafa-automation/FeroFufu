@@ -1,0 +1,460 @@
+/* =====================================================
+   FeroFUFU – css/tier-maker.css
+   TierMaker (FeroTier) Katman Listesi Stilleri
+   ===================================================== */
+
+.tier-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 14px 60px;
+  animation: fadeIn 0.4s ease;
+}
+
+.tier-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 159, 28, 0.15);
+  border: 1px solid rgba(255, 159, 28, 0.4);
+  color: var(--accent-purple, #FF9F1C);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.tier-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #FDF0D5);
+  margin-bottom: 6px;
+}
+
+.tier-subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #C0B297);
+}
+
+/* Tier Toolbar */
+.tier-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(20, 14, 12, 0.85);
+  border: 1px solid rgba(255, 159, 28, 0.25);
+  border-radius: 14px;
+  padding: 10px 16px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+}
+
+.tier-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tier-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 159, 28, 0.12);
+  border: 1px solid rgba(255, 159, 28, 0.3);
+  color: var(--text-primary, #FDF0D5);
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tier-tool-btn:hover {
+  background: rgba(255, 159, 28, 0.25);
+  border-color: var(--accent-purple, #FF9F1C);
+  transform: translateY(-1px);
+}
+
+.tier-tool-btn.btn-export {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  border-color: rgba(16, 185, 129, 0.5);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.tier-tool-btn.btn-export:hover {
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5);
+}
+
+.tier-tool-btn.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.tier-tool-btn.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+  color: #fff;
+}
+
+/* Tier Board (Table) */
+.tier-board {
+  display: flex;
+  flex-direction: column;
+  background: #0f0a07;
+  border: 2px solid rgba(255, 159, 28, 0.35);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+  margin-bottom: 24px;
+}
+
+/* Tier Row */
+.tier-row {
+  display: flex;
+  min-height: 85px;
+  border-bottom: 1px solid rgba(255, 159, 28, 0.18);
+  background: rgba(20, 14, 12, 0.6);
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.tier-row:last-child {
+  border-bottom: none;
+}
+
+.tier-row.drag-over {
+  background: rgba(255, 159, 28, 0.15);
+}
+
+/* Tier Label / Header */
+.tier-label-box {
+  width: 95px;
+  min-width: 95px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  text-align: center;
+  font-family: var(--font-display, 'Cinzel', serif);
+  font-weight: 900;
+  font-size: 1.35rem;
+  color: #111;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  transition: filter 0.2s ease;
+}
+
+.tier-label-box:hover {
+  filter: brightness(1.1);
+}
+
+.tier-label-text {
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* Tier Content Drop Zone */
+.tier-items-dropzone {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 6px;
+  padding: 6px;
+  min-height: 85px;
+}
+
+/* Tier Row Controls */
+.tier-row-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(10, 6, 4, 0.85);
+  border-left: 1px solid rgba(255, 159, 28, 0.15);
+}
+
+.tier-ctrl-btn {
+  width: 26px;
+  height: 26px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary, #C0B297);
+  border-radius: 6px;
+  font-size: 0.72rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tier-ctrl-btn:hover {
+  background: rgba(255, 159, 28, 0.25);
+  color: var(--accent-purple, #FF9F1C);
+  border-color: var(--accent-purple, #FF9F1C);
+}
+
+/* Draggable Items */
+.tier-item {
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  background: #000;
+  border: 1.5px solid rgba(255, 159, 28, 0.3);
+  overflow: hidden;
+  cursor: grab;
+  position: relative;
+  user-select: none;
+  touch-action: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tier-item:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+.tier-item.dragging {
+  opacity: 0.4;
+  transform: scale(0.9);
+}
+
+.tier-item.selected-for-tap {
+  border-color: #10b981;
+  box-shadow: 0 0 12px #10b981;
+  transform: translateY(-4px);
+}
+
+.tier-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.tier-item-name-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 1px 3px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+/* Unranked Pool / Character Bank */
+.tier-bank-container {
+  background: rgba(20, 14, 12, 0.85);
+  border: 1px solid rgba(255, 159, 28, 0.3);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.tier-bank-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tier-bank-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #FDF0D5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tier-bank-count {
+  font-size: 0.75rem;
+  background: rgba(255, 159, 28, 0.2);
+  color: var(--accent-purple, #FF9F1C);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.tier-bank-pool {
+  min-height: 100px;
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px;
+  background: rgba(10, 6, 4, 0.6);
+  border-radius: 10px;
+  border: 1px dashed rgba(255, 159, 28, 0.25);
+}
+
+.tier-bank-empty-text {
+  width: 100%;
+  text-align: center;
+  color: var(--text-muted, #C0B297);
+  font-size: 0.82rem;
+  padding: 24px 10px;
+}
+
+/* Mobil Dokun-Yerleştir Hızlı Seçim Barı (Quick Placement Sheet) */
+.tier-quick-bar {
+  display: none;
+  position: fixed;
+  bottom: calc(64px + 12px + env(safe-area-inset-bottom, 0px));
+  left: 12px;
+  right: 12px;
+  background: rgba(15, 10, 8, 0.95);
+  border: 1px solid var(--accent-purple, #FF9F1C);
+  border-radius: 16px;
+  padding: 10px 14px;
+  z-index: 1001;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 159, 28, 0.3);
+  backdrop-filter: blur(16px);
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tier-quick-bar.visible {
+  display: block;
+}
+
+.tier-quick-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.78rem;
+  color: var(--text-primary, #FDF0D5);
+  font-weight: 600;
+}
+
+.tier-quick-options {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.tier-quick-btn {
+  flex: 1;
+  min-width: 44px;
+  height: 38px;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 0.95rem;
+  color: #111;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+}
+
+.tier-quick-btn:active {
+  transform: scale(0.92);
+}
+
+/* Modal for Edit Tier */
+.tier-edit-modal-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.tier-color-picker-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tier-color-presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tier-color-dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.15s ease;
+}
+
+.tier-color-dot:hover, .tier-color-dot.active {
+  transform: scale(1.15);
+  border-color: #fff;
+}
+
+/* Export Preview Box */
+.tier-export-preview {
+  max-width: 100%;
+  max-height: 60vh;
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 159, 28, 0.3);
+  margin: 14px 0;
+  background: #000;
+}
+
+.tier-export-preview img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tier-title {
+    font-size: 1.6rem;
+  }
+  .tier-label-box {
+    width: 65px;
+    min-width: 65px;
+    font-size: 1.1rem;
+    padding: 4px;
+  }
+  .tier-item {
+    width: 58px;
+    height: 58px;
+  }
+  .tier-row {
+    min-height: 70px;
+  }
+  .tier-items-dropzone {
+    min-height: 70px;
+  }
+  .tier-row-controls {
+    flex-direction: column;
+    padding: 4px;
+    gap: 3px;
+  }
+  .tier-ctrl-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 0.65rem;
+  }
+}

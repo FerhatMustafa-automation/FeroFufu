@@ -1,12 +1,9 @@
 /* =====================================================
    FeroFUFU – js/modules/upload.js
    Şifre Doğrulama + İçerik Yükleme Formu
-   Komut 1 & 2 – Şifre: "matilda"
    ===================================================== */
 
 "use strict";
-
-const UPLOAD_PASSWORD = "matilda";
 
 /* -------------------------------------------------------
    MODAL HELPERS
@@ -53,37 +50,39 @@ function closeUploadForm() {
 }
 
 /* -------------------------------------------------------
-   PASSWORD VERIFICATION
+   PASSWORD VERIFICATION (Delegated to cryptographic FeroAuth)
    ------------------------------------------------------- */
 
-function verifyPassword() {
+async function verifyPassword() {
   const input     = document.getElementById("password-input");
   const errorEl   = document.getElementById("password-error");
   if (!input) return;
 
-  const value = input.value.trim().toLowerCase();
+  const value = input.value;
 
-  if (value === UPLOAD_PASSWORD) {
-    // SUCCESS
-    clearPasswordError();
-    // Tiny success flash
-    input.classList.add("input-success");
-    setTimeout(() => {
-      input.classList.remove("input-success");
-      openUploadForm();
-    }, 400);
-  } else {
-    // FAIL
-    if (errorEl) {
-      errorEl.textContent = "❌ Yanlış şifre! Tekrar dene.";
-      errorEl.classList.add("error-visible");
+  if (typeof window.FeroAuth !== "undefined") {
+    const result = await window.FeroAuth.verifyUpload(value);
+    if (result.success) {
+      // SUCCESS
+      clearPasswordError();
+      input.classList.add("input-success");
+      setTimeout(() => {
+        input.classList.remove("input-success");
+        openUploadForm();
+      }, 400);
+    } else {
+      // FAIL
+      if (errorEl) {
+        errorEl.textContent = result.error || "❌ Yanlış şifre! Tekrar dene.";
+        errorEl.classList.add("error-visible");
+      }
+      input.classList.add("input-shake");
+      input.addEventListener("animationend", () => {
+        input.classList.remove("input-shake");
+      }, { once: true });
+      input.value = "";
+      input.focus();
     }
-    input.classList.add("input-shake");
-    input.addEventListener("animationend", () => {
-      input.classList.remove("input-shake");
-    }, { once: true });
-    input.value = "";
-    input.focus();
   }
 }
 
@@ -180,7 +179,7 @@ function isAudioCategory(category) {
 }
 
 /* -------------------------------------------------------
-   AKILLİ YOUTUBE / DRIVE LİNK DÖNÜŞTURÜCÜ
+   AKILLI YOUTUBE / DRIVE LİNK DÖNÜŞTURÜCÜ
    ------------------------------------------------------- */
 
 /**
@@ -198,6 +197,9 @@ function convertToYouTubeEmbed(rawUrl) {
 
   try {
     const u = new URL(url);
+    if (u.protocol !== "http:" && u.protocol !== "https:") {
+      return "";
+    }
     const host = u.hostname.replace("www.", "");
 
     // --- YouTube: watch?v=ID ---
@@ -248,9 +250,13 @@ function showVideoFields() {
   document.querySelectorAll(".video-fields").forEach(el => {
     el.style.removeProperty("display");
   });
-  // Görsel alanını gizle
+  // Thumbnail alanını göster (Litvus'un Soytarıları için görsel isteniyor)
   const imageGroup = document.getElementById("upload-file")?.closest(".form-group");
-  if (imageGroup) imageGroup.style.display = "none";
+  if (imageGroup) {
+    imageGroup.style.removeProperty("display");
+    const label = imageGroup.querySelector("label");
+    if (label) label.textContent = "Bölüm Görseli (Thumbnail)";
+  }
   // Ses alanlarını gizle
   hideAudioFields();
 }
@@ -259,9 +265,13 @@ function hideVideoFields() {
   document.querySelectorAll(".video-fields").forEach(el => {
     el.style.display = "none";
   });
-  // Görsel alanını tekrar göster (sadece DnD için)
+  // Görsel alanını tekrar göster ve label'i eski haline getir
   const imageGroup = document.getElementById("upload-file")?.closest(".form-group");
-  if (imageGroup) imageGroup.style.removeProperty("display");
+  if (imageGroup) {
+    imageGroup.style.removeProperty("display");
+    const label = imageGroup.querySelector("label");
+    if (label) label.textContent = "Görsel veya Dosya *";
+  }
   // Önizlemeyi gizle
   const preview = document.getElementById("video-link-preview");
   if (preview) preview.classList.remove("preview-show");
@@ -272,10 +282,29 @@ function isVideoCategory(category) {
 }
 
 /* -------------------------------------------------------
-   UPLOAD SUBMIT (GUNCELLENMIS - localStorage destekli)
+   LOADING STATE
    ------------------------------------------------------- */
 
-function handleUploadSubmit(event) {
+function setUploadLoading(isLoading) {
+  const btn = document.getElementById("upload-submit-btn");
+  if (!btn) return;
+  if (isLoading) {
+    btn.disabled = true;
+    btn.dataset.originalText = btn.innerHTML;
+    btn.innerHTML = `<span style="display:inline-block; animation: spin 1s linear infinite;">⏳</span> Yükleniyor...`;
+  } else {
+    btn.disabled = false;
+    if (btn.dataset.originalText) {
+      btn.innerHTML = btn.dataset.originalText;
+    }
+  }
+}
+
+/* -------------------------------------------------------
+   UPLOAD SUBMIT – Canvas Compression + localStorage
+   ------------------------------------------------------- */
+
+async function handleUploadSubmit(event) {
   event.preventDefault();
 
   const title    = document.getElementById("upload-title")?.value.trim();
@@ -291,6 +320,8 @@ function handleUploadSubmit(event) {
     }
     return;
   }
+
+  setUploadLoading(true);
 
   // EDİT MODU
   if (editId) {
@@ -314,26 +345,58 @@ function handleUploadSubmit(event) {
           items[index].embedUrl = link;
         }
         
-        if (typeof _saveItemsByCategory === 'function') _saveItemsByCategory(category, items);
-        
-        if (statusEl) {
-          statusEl.textContent = `✅ İçerik başarıyla güncellendi!`;
-          statusEl.className   = "upload-status status-success";
-        }
-        
-        if (category === "podcast" && typeof loadPodcastsSection === 'function') loadPodcastsSection();
-        else if (category === "audio" && typeof loadAudioVaultSection === 'function') loadAudioVaultSection();
-        else if (category === "season1" && typeof loadSeason1Section === 'function') loadSeason1Section();
-        else if (category === "season2" && typeof loadSeason2Section === 'function') loadSeason2Section();
+        const finalizeEdit = () => {
+          if (typeof _saveItemsByCategory === 'function') _saveItemsByCategory(category, items);
+          
+          if (statusEl) {
+            statusEl.textContent = `✅ İçerik başarıyla güncellendi!`;
+            statusEl.className   = "upload-status status-success";
+          }
+          
+          if (category === "podcast" && typeof loadPodcastsSection === 'function') loadPodcastsSection();
+          else if (category === "audio" && typeof loadAudioVaultSection === 'function') loadAudioVaultSection();
+          else if (category === "season1" && typeof loadSeason1Section === 'function') loadSeason1Section();
+          else if (category === "season2" && typeof loadSeason2Section === 'function') loadSeason2Section();
 
-        setTimeout(() => { closeUploadForm(); }, 1800);
+          setTimeout(() => { closeUploadForm(); }, 1800);
+        };
+
+        const fileEl = document.getElementById("upload-file");
+        const file   = fileEl?.files[0] || null;
+
+        if (file && file.type.startsWith("image/")) {
+          try {
+            let maxWidth = 900, maxHeight = 900, quality = 0.75;
+            if (isVideoCategory(category)) {
+              maxWidth = 640; maxHeight = 360; quality = 0.7;
+            }
+            const compressedDataUrl = await window.feroMedia.compressImage(file, {
+              maxWidth, maxHeight, quality
+            });
+            
+            if (isVideoCategory(category)) {
+              items[index].thumbnail = compressedDataUrl;
+            } else {
+              items[index].image = compressedDataUrl;
+            }
+            finalizeEdit();
+          } catch (err) {
+            console.error("[Upload] Görsel sıkıştırma hatası (Edit):", err);
+            finalizeEdit();
+          }
+        } else {
+          finalizeEdit();
+        }
       }
     }
+    setUploadLoading(false);
     return;
   }
 
+  // ═══════════════════════════════════════════════════════
+  //  SES KATEGORİSİ
+  // ═══════════════════════════════════════════════════════
   if (isAudioCategory(category)) {
-    // --- SES KATEGORISI ---
     const audioUrl      = document.getElementById("upload-audio-url")?.value.trim();
     const audioFileEl   = document.getElementById("upload-audio-file");
     const audioFile     = audioFileEl?.files[0] || null;
@@ -343,53 +406,124 @@ function handleUploadSubmit(event) {
         statusEl.textContent = "⚠️ Ses URL'si veya dosya gereklidir!";
         statusEl.className   = "upload-status status-error";
       }
+      setUploadLoading(false);
       return;
     }
 
     if (audioFile) {
+      // Ses dosyasını Base64 olarak oku (sıkıştırma yok, ses dosyası zaten küçüktür)
       const reader = new FileReader();
       reader.onload = (e) => {
         _saveAudioEntry(category, title, desc, e.target.result, statusEl);
+        setUploadLoading(false);
       };
       reader.onerror = () => {
         if (statusEl) {
           statusEl.textContent = "❌ Dosya okunurken hata oluştu.";
           statusEl.className   = "upload-status status-error";
         }
+        setUploadLoading(false);
       };
       reader.readAsDataURL(audioFile);
     } else {
       _saveAudioEntry(category, title, desc, audioUrl, statusEl);
+      setUploadLoading(false);
     }
 
+  // ═══════════════════════════════════════════════════════
+  //  VİDEO KATEGORİSİ (season1 / season2)
+  // ═══════════════════════════════════════════════════════
   } else if (isVideoCategory(category)) {
-    // --- VİDEO KATEGORISI (season1 / season2) ---
-    const rawUrl   = document.getElementById("upload-video-url")?.value.trim();
+    const rawUrl = document.getElementById("upload-video-url")?.value.trim();
     if (!rawUrl) {
       if (statusEl) {
         statusEl.textContent = "⚠️ Video linki zorunludur!";
         statusEl.className   = "upload-status status-error";
       }
+      setUploadLoading(false);
       return;
     }
     const embedUrl = convertToYouTubeEmbed(rawUrl);
-    _saveVideoEpisode(category, title, desc, embedUrl, statusEl);
 
-  } else {
-    // --- DIGER KATEGORILER (DnD vb.) ---
+    // Thumbnail kontrolü
     const fileEl = document.getElementById("upload-file");
     const file   = fileEl?.files[0] || null;
-    const payload = { title, category, description: desc, fileName: file?.name || null };
-    console.log("%c[FeroFUFU Upload] İçerik kaydedildi (mock):", "color:#8b5cf6;font-weight:bold;", payload);
 
-    if (statusEl) {
-      statusEl.textContent = `✅ "${title}" başarıyla eklendi! (mock)`;
-      statusEl.className   = "upload-status status-success";
+    if (file && file.type.startsWith("image/")) {
+      try {
+        // Canvas ile sıkıştır → Base64 Data URL
+        const compressedDataUrl = await window.feroMedia.compressImage(file, {
+          maxWidth: 640, maxHeight: 360, quality: 0.7
+        });
+        _saveVideoEpisode(category, title, desc, embedUrl, statusEl, compressedDataUrl);
+      } catch (err) {
+        console.error("[Upload] Thumbnail sıkıştırma hatası:", err);
+        // Sıkıştırma başarısızsa thumbnail olmadan kaydet
+        _saveVideoEpisode(category, title, desc, embedUrl, statusEl, "");
+      }
+    } else {
+      _saveVideoEpisode(category, title, desc, embedUrl, statusEl, "");
+    }
+    setUploadLoading(false);
+
+  // ═══════════════════════════════════════════════════════
+  //  DİĞER KATEGORİLER (DnD Karakter vb.)
+  // ═══════════════════════════════════════════════════════
+  } else {
+    const fileEl = document.getElementById("upload-file");
+    const file   = fileEl?.files[0] || null;
+
+    if (!file) {
+      if (statusEl) {
+        statusEl.textContent = "⚠️ Görsel dosyası zorunludur!";
+        statusEl.className   = "upload-status status-error";
+      }
+      setUploadLoading(false);
+      return;
     }
 
-    setTimeout(() => { closeUploadForm(); }, 1800);
+    try {
+      // Canvas ile sıkıştır → Base64 Data URL (~60-100 KB)
+      const compressedDataUrl = await window.feroMedia.compressImage(file, {
+        maxWidth: 900, maxHeight: 900, quality: 0.75
+      });
+
+      const character = {
+        id: Date.now(),
+        name: title,
+        description: desc || "",
+        image: compressedDataUrl,  // Sıkıştırılmış Base64 — doğrudan img.src olarak kullanılır
+        class: "Yeni Karakter",
+        color: "#8b5cf6"
+      };
+
+      if (typeof getDndCharacters === 'function' && typeof saveDndCharacters === 'function') {
+        const chars = getDndCharacters();
+        chars.push(character);
+        saveDndCharacters(chars);
+      }
+
+      if (statusEl) {
+        statusEl.textContent = `✅ "${title}" başarıyla eklendi!`;
+        statusEl.className   = "upload-status status-success";
+      }
+      console.log("%c[FeroFUFU Upload] Karakter kaydedildi:", "color:#8b5cf6;font-weight:bold;", character.name);
+      setTimeout(() => { closeUploadForm(); }, 1800);
+
+    } catch (err) {
+      console.error("[Upload] Görsel işleme hatası:", err);
+      if (statusEl) {
+        statusEl.textContent = "❌ Görsel işlenirken hata oluştu: " + err.message;
+        statusEl.className   = "upload-status status-error";
+      }
+    }
+    setUploadLoading(false);
   }
 }
+
+/* -------------------------------------------------------
+   SAVE HELPERS
+   ------------------------------------------------------- */
 
 function _saveAudioEntry(category, title, desc, url, statusEl) {
   const track = {
@@ -423,13 +557,13 @@ function _saveAudioEntry(category, title, desc, url, statusEl) {
   }
 }
 
-function _saveVideoEpisode(category, title, desc, embedUrl, statusEl) {
+function _saveVideoEpisode(category, title, desc, embedUrl, statusEl, thumbnailDataUrl) {
   const ep = {
     id:          `${category}-${Date.now()}`,
     title,
     description: desc || "",
     embedUrl,
-    thumbnail:   "",
+    thumbnail:   thumbnailDataUrl || "",
     addedAt:     new Date().toLocaleDateString("tr-TR")
   };
 

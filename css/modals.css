@@ -202,7 +202,7 @@ body.modal-open {
   font-family: 'Outfit', sans-serif;
   font-size: 0.8rem;
   color: #f87171;
-  height: 20px;
+  min-height: 20px; height: auto;
   opacity: 0;
   transition: opacity 0.25s ease;
   margin-bottom: 4px;

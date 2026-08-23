@@ -60,22 +60,31 @@ const categories = {
     color: "#ef4444",
     characters: null
   },
-  lol: {
-    id: "lol",
-    label: "LoL Karakterleri",
-    icon: "⚔️",
-    active: false,
-    announcement: "LoL Karakterleri'nin",
-    color: "#06b6d4",
-    characters: null  // placeholder for future
+  tiermaker: {
+    id: "tiermaker",
+    label: "FeroTier (TierMaker)",
+    icon: "📊",
+    active: true,
+    announcement: "FeroTier Katman Tablosu",
+    color: "#10b981",
+    characters: null
   },
-  funny_moments: {
-    id: "funny_moments",
-    label: "Komik Anlar",
-    icon: "😂",
-    active: false,
-    announcement: "Komik Anlarin",
+  fufumaker: {
+    id: "fufumaker",
+    label: "Turnuva Oluşturucu",
+    icon: "✨",
+    active: true,
+    announcement: "Turnuva Oluşturucu",
     color: "#ec4899",
+    characters: null
+  },
+  community: {
+    id: "community",
+    label: "Topluluk Galerisi",
+    icon: "🌍",
+    active: true,
+    announcement: "Topluluk Galerisi",
+    color: "#06b6d4",
     characters: null
   }
 };
@@ -186,12 +195,21 @@ function showSection(sectionEl) {
     document.getElementById("podcasts-section"),
     document.getElementById("audio-vault-section"),
     document.getElementById("season1-section"),
-    document.getElementById("season2-section")
+    document.getElementById("season2-section"),
+    document.getElementById("fufu-maker-section"),
+    document.getElementById("tier-maker-section"),
+    document.getElementById("community-section")
   ].forEach(el => {
     if (el) el.classList.add("hidden");
   });
   if (sectionEl) sectionEl.classList.remove("hidden");
   window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function updateBottomNavActive(navId) {
+  document.querySelectorAll(".bottom-nav-item").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.nav === navId);
+  });
 }
 
 function sleep(ms) {
@@ -276,7 +294,6 @@ function generateConfetti() {
 /**
  * loadCategory(categoryId)
  * Ana modüler giriş noktası.
- * Yeni bir kategori eklediğinde buraya mantığını koyabilirsin.
  */
 function loadCategory(categoryId) {
   const cat = categories[categoryId];
@@ -294,33 +311,73 @@ function loadCategory(categoryId) {
   switch (categoryId) {
     case "dnd":
       startTournament(cat.characters);
+      updateBottomNavActive("dnd");
+      break;
+    case "tiermaker":
+      showSection(document.getElementById("tier-maker-section"));
+      if (window.FeroTier && typeof window.FeroTier.init === "function") window.FeroTier.init();
+      updateBottomNavActive("tiermaker");
+      break;
+    case "fufumaker":
+      showSection(document.getElementById("fufu-maker-section"));
+      if (window.FufuMaker && typeof window.FufuMaker.init === "function") window.FufuMaker.init();
+      updateBottomNavActive("fufumaker");
+      break;
+    case "community":
+      showSection(document.getElementById("community-section"));
+      if (window.FeroCommunity && typeof window.FeroCommunity.init === "function") window.FeroCommunity.init();
+      updateBottomNavActive("community");
       break;
     case "podcast":
       showSection(document.getElementById("podcasts-section"));
       if (typeof loadPodcastsSection === "function") loadPodcastsSection();
+      updateBottomNavActive("menu");
       break;
     case "audio":
       showSection(document.getElementById("audio-vault-section"));
       if (typeof loadAudioVaultSection === "function") loadAudioVaultSection();
+      updateBottomNavActive("menu");
       break;
     case "season1":
       showSection(document.getElementById("season1-section"));
       if (typeof loadSeason1Section === "function") loadSeason1Section();
+      updateBottomNavActive("menu");
       break;
     case "season2":
       showSection(document.getElementById("season2-section"));
       if (typeof loadSeason2Section === "function") loadSeason2Section();
-      break;
-    case "lol":
-      showComingSoonToast(cat.label);
-      break;
-    case "funny_moments":
-      showComingSoonToast(cat.label);
+      updateBottomNavActive("menu");
       break;
     default:
       console.warn("Bilinmeyen kategori:", categoryId);
   }
 }
+
+/**
+ * startCustomTournament(tournamentData)
+ * Kullanıcının FufuMaker üzerinden yarattığı turnuvayı başlatır.
+ */
+window.startCustomTournament = function(tournamentData) {
+  if (!tournamentData || !tournamentData.items || tournamentData.items.length < 2) return;
+  
+  const customCat = {
+    id: tournamentData.id || "custom-" + Date.now(),
+    label: tournamentData.title || "Özel Turnuva",
+    icon: tournamentData.icon || "🏆",
+    active: true,
+    announcement: (tournamentData.title || "Özel Turnuva") + " Şampiyonu",
+    color: "#FF9F1C",
+    characters: tournamentData.items
+  };
+  categories[customCat.id] = customCat;
+  state.currentCategory = customCat;
+  
+  startTournament(tournamentData.items);
+  if (tournamentData.question && dom.roundSubtitle()) {
+    dom.roundSubtitle().textContent = tournamentData.question;
+  }
+  updateBottomNavActive("maker");
+};
 
 function showComingSoonToast(label) {
   const existing = document.getElementById("coming-soon-toast");
@@ -328,7 +385,14 @@ function showComingSoonToast(label) {
 
   const toast = document.createElement("div");
   toast.id = "coming-soon-toast";
-  toast.innerHTML = `🔒 <strong>${label}</strong> yakında geliyor!`;
+  toast.className = "coming-soon-toast";
+  const lockText = document.createTextNode("🔒 ");
+  const strong = document.createElement("strong");
+  strong.textContent = label;
+  const suffixText = document.createTextNode(" yakında geliyor!");
+  toast.appendChild(lockText);
+  toast.appendChild(strong);
+  toast.appendChild(suffixText);
   Object.assign(toast.style, {
     position: "fixed",
     bottom: "32px",
@@ -403,8 +467,11 @@ function updateMatchCounter() {
   dom.matchCountText().textContent = `${label} – Mac ${current} / ${total}`;
 
   const pct = total > 0 ? (state.matchIndex / total) * 100 : 0;
-  dom.progressFill().style.width = pct + "%";
-  dom.progressFill().parentElement.setAttribute("aria-valuenow", pct);
+  const fill = dom.progressFill();
+  if (fill) {
+    fill.style.width = pct + "%";
+    if (fill.parentElement) fill.parentElement.setAttribute("aria-valuenow", pct);
+  }
 }
 
 /* =====================================================
@@ -480,7 +547,7 @@ function setupButtons() {
       const catId = el.dataset.category;
       const cat   = categories[catId];
       if (!cat || !cat.active) return;
-      if (el.tagName === "DIV" || el.id === "start-dnd-btn") {
+      if (el.tagName === "DIV" || el.tagName === "BUTTON") {
         loadCategory(catId);
       }
     });
@@ -495,6 +562,31 @@ function setupButtons() {
       });
     }
   });
+
+  // Dedicated Start Buttons
+  document.getElementById("start-dnd-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    loadCategory("dnd");
+  });
+  document.getElementById("start-tier-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    loadCategory("tiermaker");
+  });
+  document.getElementById("start-maker-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    loadCategory("fufumaker");
+  });
+  document.getElementById("start-community-btn")?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    loadCategory("community");
+  });
+
+  // Mobile Bottom Nav
+  document.getElementById("bnav-home")?.addEventListener("click", () => goHome());
+  document.getElementById("bnav-dnd")?.addEventListener("click", () => loadCategory("dnd"));
+  document.getElementById("bnav-tier")?.addEventListener("click", () => loadCategory("tiermaker"));
+  document.getElementById("bnav-maker")?.addEventListener("click", () => loadCategory("fufumaker"));
+  document.getElementById("bnav-community")?.addEventListener("click", () => loadCategory("community"));
 
   // Character cards – vote on click
   const cardLeft  = dom.cardLeft();
@@ -535,6 +627,7 @@ function goHome() {
   state.currentCategory = null;
   state.isAnimating = false;
   showSection(dom.heroSection());
+  updateBottomNavActive("home");
 }
 
 /* =====================================================

@@ -239,7 +239,7 @@ function _renderAudioVaultTrackList() {
    ------------------------------------------------------- */
 function _selectAudioVaultTrack(index) {
   const tracks = audioVaultState.tracks;
-  if (index < 0 || index >= tracks.length) return;
+  if (!tracks || tracks.length === 0 || isNaN(index) || index < 0 || index >= tracks.length) return;
 
   const wasPlaying = audioVaultState.isPlaying;
   audioVaultState.currentIndex = index;
@@ -358,6 +358,7 @@ function _bindAudioVaultEvents() {
   // Prev / Next
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
+      if (audioVaultState.tracks.length === 0) return;
       const idx = (audioVaultState.currentIndex - 1 + audioVaultState.tracks.length) % audioVaultState.tracks.length;
       _selectAudioVaultTrack(idx);
       if (audioVaultState.isPlaying) setTimeout(_audioVaultPlay, 100);
@@ -366,6 +367,7 @@ function _bindAudioVaultEvents() {
 
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
+      if (audioVaultState.tracks.length === 0) return;
       const idx = (audioVaultState.currentIndex + 1) % audioVaultState.tracks.length;
       _selectAudioVaultTrack(idx);
       if (audioVaultState.isPlaying) setTimeout(_audioVaultPlay, 100);
@@ -457,7 +459,8 @@ function _avEscHtml(str) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function _showAudioVaultToast(msg) {

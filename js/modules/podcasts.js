@@ -208,7 +208,7 @@ function _renderPodcastTrackList() {
       role="option"
       aria-selected="${i === podcastState.currentIndex}"
       tabindex="0"
-      title="${t.title}"
+      title="${_escHtml(t.title)}"
     >
       <div class="track-num">${i + 1}</div>
       <div class="track-info">
@@ -240,7 +240,7 @@ function _renderPodcastTrackList() {
    ------------------------------------------------------- */
 function _selectPodcastTrack(index) {
   const tracks = podcastState.tracks;
-  if (index < 0 || index >= tracks.length) return;
+  if (!tracks || tracks.length === 0 || isNaN(index) || index < 0 || index >= tracks.length) return;
 
   const wasPlaying = podcastState.isPlaying;
   podcastState.currentIndex = index;
@@ -363,6 +363,7 @@ function _bindPodcastPlayerEvents() {
   // Prev / Next
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {
+      if (podcastState.tracks.length === 0) return;
       const idx = (podcastState.currentIndex - 1 + podcastState.tracks.length) % podcastState.tracks.length;
       _selectPodcastTrack(idx);
       if (podcastState.isPlaying) setTimeout(_podcastPlay, 100);
@@ -371,6 +372,7 @@ function _bindPodcastPlayerEvents() {
 
   if (nextBtn) {
     nextBtn.addEventListener("click", () => {
+      if (podcastState.tracks.length === 0) return;
       const idx = (podcastState.currentIndex + 1) % podcastState.tracks.length;
       _selectPodcastTrack(idx);
       if (podcastState.isPlaying) setTimeout(_podcastPlay, 100);
@@ -464,7 +466,8 @@ function _escHtml(str) {
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function _showPodcastToast(msg) {
